@@ -5,10 +5,10 @@
 ;; Maintainer: Turadg Aleahmad <turadg at users.sourceforge.net>
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2004-01-24
+;; Modified: 2005-07-27
 ;; X-URL:   http://php-mode.sourceforge.net/
 
-(defconst php-version "1.1.0"
+(defconst php-version "1.2.0"
   "PHP Mode version number.")
 
 ;;; License
@@ -70,6 +70,12 @@
 
 ;;; Changelog:
 
+;; 1.2
+;;   Implemented php-show-arglist, C-. (Engelke Eschner)
+;;   Implemented php-complete-function, M-tab (Engelke Eschner)
+;;   Re-enabled # comment detection in GNU Emacs (Urban Müller)
+;;   Fixed some keybindings and default settings (Engelke Eschner)
+
 ;; 1.1
 ;;   Added PHP5 support (Giacomo Tesio)
 ;;     known problem: doesn't highlight after first 'implements'
@@ -89,6 +95,7 @@
 (require 'font-lock)
 (require 'cc-mode)
 (require 'custom)
+(require 'etags)
 (eval-when-compile
   (require 'regexp-opt))
 
@@ -110,7 +117,7 @@ Turning this on will open it whenever php-mode is loaded."
   :type 'boolean
   :group 'php)
 
-(defcustom php-manual-url "http://www.php.net/manual/en/manual.php"
+(defcustom php-manual-url "http://www.php.net/manual/en/"
   "*URL at which to find PHP manual.\
 You can replace \"en\" with your ISO language code."
   :type 'string
@@ -118,6 +125,16 @@ You can replace \"en\" with your ISO language code."
 
 (defcustom php-search-url "http://www.php.net/"
   "*URL at which to search for documentation on a word"
+  :type 'string
+  :group 'php)
+
+(defcustom php-completion-file ""
+  "*Path to the file which contains the function names known to PHP"
+  :type 'string
+  :group 'php)
+
+(defcustom php-manual-path ""
+  "*Path to the directory which contains the PHP manual"
   :type 'string
   :group 'php)
 
@@ -138,6 +155,9 @@ Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
+(defvar php-completion-table nil
+  "Obarray of tag names defined in current tags table and functions know to PHP.")
+
 ;; Note whether we're in XEmacs
 (defconst xemacsp (string-match "Lucid\\|XEmacs" emacs-version)
   "Non nil if using XEmacs.")
@@ -145,11 +165,11 @@ Turning this on will force PEAR rules on all PHP files."
 ;;;###autoload
 (define-derived-mode php-mode c-mode "PHP"
   "Major mode for editing PHP code.\n\n\\{php-mode-map}"
-  
+
   (setq comment-start "// "
 	comment-end   ""
 	comment-start-skip "// *")
-  
+
   (setq c-class-key php-class-key)
   (setq c-conditional-key php-conditional-key)
 
@@ -160,39 +180,37 @@ Turning this on will force PEAR rules on all PHP files."
   ;; problem, please let me know.  Of course, you're welcome to
   ;; uncomment this line in your installation.
 ;  (modify-syntax-entry ?$ "." php-mode-syntax-table)
-  
+
   ;; The above causes XEmacs to handle shell-style comments correctly,
   ;; but fails to work in GNU Emacs which fails to interpret \n as the
   ;; end of the comment.
   (if xemacsp (progn
-		(modify-syntax-entry ?# "< b" php-mode-syntax-table)
-		(modify-syntax-entry ?\n "> b" php-mode-syntax-table)
-		))
-  
+                (modify-syntax-entry ?# "< b" php-mode-syntax-table)
+                (modify-syntax-entry ?\n "> b" php-mode-syntax-table)))
+
   (make-local-variable 'font-lock-defaults)
   (setq font-lock-defaults
- 	'((php-font-lock-keywords-1
- 	   php-font-lock-keywords-2
- 	   ;; Comment-out the next line if the font-coloring is too
- 	   ;; extreme/ugly for you.
- 	   php-font-lock-keywords-3
- 	   )
- 	  nil				; KEYWORDS-ONLY
- 	  T				; CASE-FOLD
- 	  nil				; SYNTAX-ALIST
- 	  nil				; SYNTAX-BEGIN
- 	  (font-lock-syntactic-keywords . php-font-lock-syntactic-keywords)))
-  
+        '((php-font-lock-keywords-1
+           php-font-lock-keywords-2
+           ;; Comment-out the next line if the font-coloring is too
+           ;; extreme/ugly for you.
+           php-font-lock-keywords-3)
+          nil                               ; KEYWORDS-ONLY
+          T                                 ; CASE-FOLD
+          nil                               ; SYNTAX-ALIST
+          nil                               ; SYNTAX-BEGIN
+          (font-lock-syntactic-keywords . php-font-lock-syntactic-keywords)))
+
   (setq font-lock-maximum-decoration t
-	case-fold-search t		; PHP vars are case-sensitive
-	imenu-generic-expression php-imenu-generic-expression)
-  
+        case-fold-search t              ; PHP vars are case-sensitive
+        imenu-generic-expression php-imenu-generic-expression)
+
   ;; Do not force newline at end of file.  Such newlines can cause
   ;; trouble if the PHP file is included in another file before calls
   ;; to header() or cookie().
   (set (make-local-variable 'require-final-newline) nil)
   (set (make-local-variable 'next-line-add-newlines) nil)
-  
+
   ;; PEAR coding standards
   (make-local-hook 'php-mode-pear-hook)
   (add-hook 'php-mode-pear-hook
@@ -209,14 +227,13 @@ Turning this on will force PEAR rules on all PHP files."
 	    (lambda nil (c-set-offset 'block-close' 0 )) nil t)
 
   (if (or php-mode-force-pear
-	  (and (stringp buffer-file-name)
-	       (string-match "PEAR\\|pear"
-			     (buffer-file-name))
-	       (string-match "\\.php$" (buffer-file-name))))
+          (and (stringp buffer-file-name)
+               (string-match "PEAR\\|pear"
+                             (buffer-file-name))
+               (string-match "\\.php$" (buffer-file-name))))
       (run-hooks 'php-mode-pear-hook))
   
-  (run-hooks 'php-mode-user-hook)
-  )
+  (run-hooks 'php-mode-user-hook))
 
 ;; Make php-mode the default mode for PHP source code buffers.
 ;;;###autoload
@@ -250,25 +267,143 @@ Turning this on will force PEAR rules on all PHP files."
 
 ;; Define function name completion function
 (defun php-complete-function ()
-  "Complete the function name at the point from known PHP functions."
+  "Perform function completion on the text around point.
+Completes to the set of names listed in the current tags table
+and the standard php functions.
+The string to complete is chosen in the same way as the default
+for \\[find-tag] (which see)."
   (interactive)
-  (message "php-complete-function not implemented yet")
-  ;; how to read the list of functions from a separate file?
-  )
+  (let ((pattern (php-get-pattern))
+        beg
+        completion
+        (php-functions (php-completion-table)))
+    (if (not pattern) (message "Nothing to complete")
+        (search-backward pattern)
+        (setq beg (point))
+        (forward-char (length pattern))
+        (setq completion (try-completion pattern php-functions nil))
+        (cond ((eq completion t))
+              ((null completion)
+               (message "Can't find completion for \"%s\"" pattern)
+               (ding))
+              ((not (string= pattern completion))
+               (delete-region beg (point))
+               (insert completion))
+              (t
+               (message "Making completion list...")
+               (with-output-to-temp-buffer "*Completions*"
+                 (display-completion-list
+                  (all-completions pattern php-functions)))
+               (message "Making completion list...%s" "done"))))))
+
+;; Build php-completion-table on demand.  The table includes the
+;; PHP functions and the tags from the current tags-file-name
+(defun php-completion-table ()
+  (or (and tags-file-name
+           (save-excursion (tags-verify-table tags-file-name))
+           php-completion-table)
+      (let ((tags-table
+             (if (and tags-file-name
+                      (functionp 'etags-tags-completion-table))
+                 (with-current-buffer (get-file-buffer tags-file-name)
+                   (etags-tags-completion-table))
+               nil))
+            (php-table
+             (cond ((and (not (string= "" php-completion-file))
+                         (file-readable-p php-completion-file))
+                    (php-build-table-from-file php-completion-file))
+                   (php-manual-path
+                    (php-build-table-from-path php-manual-path))
+                   (t nil))))
+        (unless (or php-table tags-table)
+          (error
+           (concat "No TAGS file active nor are "
+                   "`php-completion-file' or `php-manual-path' set")))
+        (when tags-table
+          ;; Combine the tables.
+          (mapatoms (lambda (sym) (intern (symbol-name sym) php-table))
+                    tags-table))
+        (setq php-completion-table php-table))))
+
+(defun php-build-table-from-file (filename)
+  (let ((table (make-vector 1022 0))
+        (buf (find-file-noselect filename)))
+    (save-excursion
+      (set-buffer buf)
+      (goto-char (point-min))
+      (while (re-search-forward
+              "^\\([-a-zA-Z0-9_.]+\\)\n"
+              nil t)
+        (intern (buffer-substring (match-beginning 1) (match-end 1))
+                table)))
+    (kill-buffer buf)
+    table))
+
+(defun php-build-table-from-path (path)
+  (let ((table (make-vector 1022 0))
+        (files (directory-files
+                path
+                nil
+                "^function\\..+\\.html$")))
+    (mapc (lambda (file)
+            (string-match "\\.\\([-a-zA-Z_0-9]+\\)\\.html$" file)
+            (intern
+             (replace-regexp-in-string
+              "-" "_" (substring file (match-beginning 1) (match-end 1)) t)
+             table))
+          files)
+    table))
+
+;; Find the pattern we want to complete
+;; find-tag-default from GNU Emacs etags.el
+(defun php-get-pattern ()
+  (save-excursion
+    (while (looking-at "\\sw\\|\\s_")
+      (forward-char 1))
+    (if (or (re-search-backward "\\sw\\|\\s_"
+				(save-excursion (beginning-of-line) (point))
+				t)
+	    (re-search-forward "\\(\\sw\\|\\s_\\)+"
+			       (save-excursion (end-of-line) (point))
+			       t))
+	(progn (goto-char (match-end 0))
+	       (buffer-substring-no-properties
+                (point)
+                (progn (forward-sexp -1)
+                       (while (looking-at "\\s'")
+                         (forward-char 1))
+                       (point))))
+      nil)))
+
+
+(defun php-show-arglist ()
+  (interactive)
+  (let* ((tagname (php-get-pattern))
+         (buf (find-tag-noselect tagname nil nil))
+         arglist)
+    (save-excursion
+      (set-buffer buf)
+      (goto-char (point-min))
+      (when (re-search-forward
+             (format "function[ \t]+%s[ \t]*(\\([^{]*\\))" tagname)
+             nil t)
+        (setq arglist (buffer-substring-no-properties
+                       (match-beginning 1) (match-end 1)))))
+    (if arglist
+        (message "Arglist for %s: %s" tagname arglist)
+        (message "unknown function: %s" tagname))))
 
 ;; Define function documentation function
 (defun php-search-documentation ()
   "Search PHP documentation for the word at the point."
   (interactive)
-  (browse-url (concat php-search-url (current-word t)))
-  )
+  (browse-url (concat php-search-url (current-word t))))
 
 ;; Define function for browsing manual
 (defun php-browse-manual ()
   "Bring up manual for PHP."
   (interactive)
-  (browse-url php-manual-url)
-  )
+  (browse-url php-manual-url))
 
 ;; Define shortcut
 (define-key php-mode-map
@@ -277,15 +412,25 @@ Turning this on will force PEAR rules on all PHP files."
 
 ;; Define shortcut
 (define-key php-mode-map
+  [(meta tab)]
+  'php-complete-function)
+
+;; Define shortcut
+(define-key php-mode-map
   "\C-c\C-m"
   'php-browse-manual)
+
+;; Define shortcut
+(define-key php-mode-map
+  '[(control .)]
+  'php-show-arglist)
 
 (defconst php-constants
   (eval-when-compile
     (regexp-opt
      '(;; core constants
        "__LINE__" "__FILE__"
-       "PHP_OS" "PHP_VERSION" 
+       "PHP_OS" "PHP_VERSION"
        "TRUE" "FALSE" "NULL"
        "E_ERROR" "E_NOTICE" "E_PARSE" "E_WARNING" "E_ALL"
        "E_USER_ERROR" "E_USER_WARNING" "E_USER_NOTICE"
@@ -323,9 +468,9 @@ Turning this on will force PEAR rules on all PHP files."
        "LOG_LOCAL2" "LOG_LOCAL3" "LOG_LOCAL4" "LOG_LOCAL5"
        "LOG_LOCAL6" "LOG_LOCAL7" "LOG_PID" "LOG_CONS" "LOG_ODELAY"
        "LOG_NDELAY" "LOG_NOWAIT" "LOG_PERROR"
-       
+
        ;; Disabled by default because they slow buffer loading
-       ;; If you have use for them, decomment the strings 
+       ;; If you have use for them, decomment the strings
        ;; that you want colored.
        ;; To compile, you may have to increase 'max-specpdl-size'
 
@@ -630,7 +775,7 @@ Turning this on will force PEAR rules on all PHP files."
 ;        "DB_FETCHMODE_FLIPPED" "DB_GETMODE_ORDERED" "DB_GETMODE_ASSOC"
 ;        "DB_GETMODE_FLIPPED" "DB_TABLEINFO_ORDER"
 ;        "DB_TABLEINFO_ORDERTABLE" "DB_TABLEINFO_FULL"
-       
+
        )))
   "PHP constants.")
 
@@ -643,7 +788,7 @@ Turning this on will force PEAR rules on all PHP files."
        "endfor" "endforeach" "endif" "endswitch" "endwhile" "exit"
        "extends" "for" "foreach" "global" "if" "include" "include_once"
        "next" "or" "require" "require_once" "return" "static" "switch"
-       "then" "var" "while" "xor" "private" "throw" "catch" "try" 
+       "then" "var" "while" "xor" "private" "throw" "catch" "try"
        "instanceof" "catch all" "finally")))
   "PHP keywords.")
 
@@ -655,7 +800,7 @@ Turning this on will force PEAR rules on all PHP files."
 (defconst php-types
   (eval-when-compile
     (regexp-opt '("array" "bool" "boolean" "char" "const" "double" "float"
-		  "int" "integer" "long" "mixed" "object" "real" 
+		  "int" "integer" "long" "mixed" "object" "real"
 		  "string")))
   "PHP types.")
 
@@ -672,12 +817,12 @@ Turning this on will force PEAR rules on all PHP files."
    (cons
     (concat "\\<\\(" php-constants "\\)\\>")
     'font-lock-constant-face)
-   
+
    ;; Fontify keywords
    (cons
     (concat "\\<\\(" php-keywords "\\)\\>")
     'font-lock-keyword-face)
-   
+
    ;; Fontify keywords and targets, and case default tags.
    (list "\\<\\(break\\|case\\|continue\\)\\>[ \t]*\\(-?\\(?:\\sw\\|\\s_\\)+\\)?"
 	 '(1 font-lock-keyword-face) '(2 font-lock-constant-face t t))
@@ -685,15 +830,15 @@ Turning this on will force PEAR rules on all PHP files."
    '(":" ("^[ \t]*\\(\\(?:\\sw\\|\\s_\\)+\\)[ \t]*:[ \t]*$"
 	  (beginning-of-line) (end-of-line)
 	  (1 font-lock-constant-face)))
-   
+
    ;; treat 'print' as keyword only when not used like a function name
    '("\\<print\\s-*(" . default)
    '("\\<print\\>" . font-lock-keyword-face)
-   
+
    ;; Fontify PHP tag
    '("<\\?\\(php\\)?" . font-lock-constant-face)
    '("\\?>" . font-lock-constant-face)
-   
+
    ;; Fontify ASP-style tag
    '("<\\%\\(=\\)?" . font-lock-constant-face)
    '("\\%>" . font-lock-constant-face)
@@ -705,7 +850,7 @@ Turning this on will force PEAR rules on all PHP files."
   (append
    php-font-lock-keywords-1
    (list
-    
+
     ;; class declaration
     '("\\<\\(class\\|interface\\)[ \t]*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
       (1 font-lock-keyword-face) (2 font-lock-type-face nil t))
@@ -720,7 +865,7 @@ Turning this on will force PEAR rules on all PHP files."
     '("\\<\\(function\\)\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
       (1 font-lock-keyword-face)
       (2 font-lock-function-name-face nil t))
-    
+
     ;; class hierarchy
     '("\\(self\\|parent\\)\\W" (1 font-lock-constant-face nil nil))
 
@@ -742,7 +887,7 @@ Turning this on will force PEAR rules on all PHP files."
   (append
    php-font-lock-keywords-2
    (list
-    
+
     ;; <word> or </word> for HTML
     '("</?\\sw+[^>]*>" . font-lock-constant-face)
 
@@ -752,23 +897,23 @@ Turning this on will force PEAR rules on all PHP files."
     ;; warn about '$' immediately after ->
     '("\\$\\(?:\\sw\\|\\s_\\)+->\\s-*\\(\\$\\)\\(\\(?:\\sw\\|\\s_\\)+\\)"
       (1 font-lock-warning-face) (2 default))
-    
+
     ;; warn about $word.word -- it could be a valid concatenation,
     ;; but without any spaces we'll assume $word->word was meant.
     '("\\$\\(?:\\sw\\|\\s_\\)+\\(\\.\\)\\sw"
       1 font-lock-warning-face)
-    
+
     ;; Warn about ==> instead of =>
     '("==+>" . font-lock-warning-face)
-    
+
     ;; exclude casts from bare-word treatment (may contain spaces)
     `(,(concat "(\\s-*\\(" php-types "\\)\\s-*)")
       1 font-lock-type-face)
-    
+
     ;; PHP5: function declarations may contain classes as parameters type
     `(,(concat "[(,]\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-+\\$\\(?:\\sw\\|\\s_\\)+\\>")
       1 font-lock-type-face)
-    
+
     ;; Fontify variables and function calls
     '("\\$\\(this\\|that\\)\\W" (1 font-lock-constant-face nil nil))
     `(,(concat "\\$\\(" php-superglobals "\\)\\W")
