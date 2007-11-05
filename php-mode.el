@@ -1,14 +1,14 @@
 ;;; php-mode.el --- major mode for editing PHP code
 
-;; Copyright (C) 1999-2003 Turadg Aleahmad
+;; Copyright (C) 1999-2004 Turadg Aleahmad
 
 ;; Maintainer: Turadg Aleahmad <turadg at users.sourceforge.net>
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2003-09-28
+;; Modified: 2004-01-24
 ;; X-URL:   http://php-mode.sourceforge.net/
 
-(defconst php-version "1.0.5"
+(defconst php-version "1.1.0"
   "PHP Mode version number.")
 
 ;;; License
@@ -65,9 +65,16 @@
 ;; Kevin Blake, Rex McMaster, Mathias Meyer, Boris Folgmann, Roland
 ;; Rosenfeld, Fred Yankowski, Craig Andrews, John Keller, Ryan
 ;; Sammartino, ppercot, Valentin Funk, Stig Bakken, Gregory Stark,
-;; Chris Morris
+;; Chris Morris, Nils Rennebarth, Gerrit Riessen, Eric Mc Sween,
+;; Ville Skytta, Giacomo Tesio
 
 ;;; Changelog:
+
+;; 1.1
+;;   Added PHP5 support (Giacomo Tesio)
+;;     known problem: doesn't highlight after first 'implements'
+;;   Better XEmacs compatibility (imenu, regexp, and comments!) (Ville Skytta)
+;;   Improvement to php-conditional-key regexp (Eric Mc Sween)
 
 ;; 1.05
 ;;   Incorporated speedbar defs by Gerrit Riessen
@@ -80,9 +87,10 @@
 
 (require 'speedbar)
 (require 'font-lock)
-(require 'regexp-opt)
 (require 'cc-mode)
 (require 'custom)
+(eval-when-compile
+  (require 'regexp-opt))
 
 ;; Local variables
 (defgroup php nil
@@ -142,6 +150,7 @@ Turning this on will force PEAR rules on all PHP files."
 	comment-end   ""
 	comment-start-skip "// *")
   
+  (setq c-class-key php-class-key)
   (setq c-conditional-key php-conditional-key)
 
   (defvar php-mode-syntax-table php-mode-syntax-table)
@@ -152,7 +161,7 @@ Turning this on will force PEAR rules on all PHP files."
   ;; uncomment this line in your installation.
 ;  (modify-syntax-entry ?$ "." php-mode-syntax-table)
   
-  ;; The above causes Xemacs to handle shell-style comments correctly,
+  ;; The above causes XEmacs to handle shell-style comments correctly,
   ;; but fails to work in GNU Emacs which fails to interpret \n as the
   ;; end of the comment.
   (if xemacsp (progn
@@ -622,7 +631,7 @@ Turning this on will force PEAR rules on all PHP files."
 ;        "DB_GETMODE_FLIPPED" "DB_TABLEINFO_ORDER"
 ;        "DB_TABLEINFO_ORDERTABLE" "DB_TABLEINFO_FULL"
        
-       ) t))
+       )))
   "PHP constants.")
 
 (defconst php-keywords
@@ -634,7 +643,8 @@ Turning this on will force PEAR rules on all PHP files."
        "endfor" "endforeach" "endif" "endswitch" "endwhile" "exit"
        "extends" "for" "foreach" "global" "if" "include" "include_once"
        "next" "or" "require" "require_once" "return" "static" "switch"
-       "then" "var" "while" "xor" "private" "throw" "catch" "try") t))
+       "then" "var" "while" "xor" "private" "throw" "catch" "try" 
+       "instanceof" "catch all" "finally")))
   "PHP keywords.")
 
 (defconst php-identifier
@@ -646,13 +656,13 @@ Turning this on will force PEAR rules on all PHP files."
   (eval-when-compile
     (regexp-opt '("array" "bool" "boolean" "char" "const" "double" "float"
 		  "int" "integer" "long" "mixed" "object" "real" 
-		  "string") t))
+		  "string")))
   "PHP types.")
 
 (defconst php-superglobals
   (eval-when-compile
-    (regexp-opt '("_GET" "_POST" "_COOKIE" "_SESSION" "_ENV"
-		  "_SERVER" "_FILES") t))
+    (regexp-opt '("_GET" "_POST" "_COOKIE" "_SESSION" "_ENV" "GLOBALS"
+		  "_SERVER" "_FILES" "_REQUEST")))
   "PHP superglobal variables.")
 
 ;; Set up font locking
@@ -696,19 +706,35 @@ Turning this on will force PEAR rules on all PHP files."
    php-font-lock-keywords-1
    (list
     
-    ;; Fontify class declaration
-    '("^[ \t]*\\(class\\)[ \t]*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
+    ;; class declaration
+    '("\\<\\(class\\|interface\\)[ \t]*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
       (1 font-lock-keyword-face) (2 font-lock-type-face nil t))
-    
-    ;; Fontify function declaration
-    '("^[ \t]*\\(function\\)\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
+    ;; handle several words specially, to include following word,
+    ;; thereby excluding it from unknown-symbol checks later
+    ;; FIX to handle implementing multiple
+    ;; currently breaks on "class Foo implements Bar, Baz"
+    '("\\<\\(new\\|extends\\|implements\\)\\s-+\\$?\\(\\(?:\\sw\\|\\s_\\)+\\)"
+      (1 font-lock-keyword-face) (2 font-lock-type-face))
+
+    ;; function declaration
+    '("\\<\\(function\\)\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
       (1 font-lock-keyword-face)
       (2 font-lock-function-name-face nil t))
     
-    ;; handle several words specially, to include following word,
-    ;; thereby excluding it from unknown-symbol checks later
-    '("\\<\\(new\\|extends\\)\\s-+\\$?\\(\\(?:\\sw\\|\\s_\\)+\\)"
-      (1 font-lock-keyword-face) (2 font-lock-type-face))
+    ;; class hierarchy
+    '("\\(self\\|parent\\)\\W" (1 font-lock-constant-face nil nil))
+
+    ;; method and variable features
+    '("\\<\\(private\\|protected\\|public\\)\\s-+\\$?\\(?:\\sw\\|\\s_\\)+"
+      (1 font-lock-keyword-face))
+
+    ;; method features
+    '("^[ \t]*\\(abstract\\|static\\|final\\)\\s-+\\$?\\(?:\\sw\\|\\s_\\)+"
+      (1 font-lock-keyword-face))
+
+    ;; variable features
+    '("^[ \t]*\\(static\\|const\\)\\s-+\\$?\\(?:\\sw\\|\\s_\\)+"
+      (1 font-lock-keyword-face))
     ))
   "Medium level highlighting for PHP mode.")
 
@@ -735,13 +761,17 @@ Turning this on will force PEAR rules on all PHP files."
     ;; Warn about ==> instead of =>
     '("==+>" . font-lock-warning-face)
     
-    ;; exclude casts from bare-word treatment
-    `(,(concat "(\\(" php-types "\\))")
+    ;; exclude casts from bare-word treatment (may contain spaces)
+    `(,(concat "(\\s-*\\(" php-types "\\)\\s-*)")
+      1 font-lock-type-face)
+    
+    ;; PHP5: function declarations may contain classes as parameters type
+    `(,(concat "[(,]\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-+\\$\\(?:\\sw\\|\\s_\\)+\\>")
       1 font-lock-type-face)
     
     ;; Fontify variables and function calls
-    '("\\$\\(this\\)\\W" (1 font-lock-constant-face nil nil)) ; "this" as constant
-    `(,(concat "\\$" php-superglobals "\\W")
+    '("\\$\\(this\\|that\\)\\W" (1 font-lock-constant-face nil nil))
+    `(,(concat "\\$\\(" php-superglobals "\\)\\W")
       (1 font-lock-constant-face nil nil)) ; $_GET & co
     '("\\$\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face)) ; $variable
     '("->\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face t t)) ; ->variable
@@ -760,7 +790,7 @@ Turning this on will force PEAR rules on all PHP files."
     ;; Mark shell-style comments.  font-lock handles this in a
     ;; separate pass from normal syntactic scanning (somehow), so we
     ;; get a chance to mark these in addition to C and C++ style
-    ;; comments.  This only works in GNU Emacs, not Xemacs 21 which
+    ;; comments.  This only works in GNU Emacs, not XEmacs 21 which
     ;; seems to ignore this same code if we try to use it.
     (list
      ;; Mark _all_ # chars as being comment-start.  That will be
@@ -781,21 +811,31 @@ Turning this on will force PEAR rules on all PHP files."
 (defvar php-imenu-generic-expression
  '(
    ("Functions"
-    "\\(^\\|\\s-\\)function\\s-+\\(\\sw+\\)\\s-*(" 2)
+    "^\\s-*function\\s-+\\([a-zA-Z0-9_]+\\)\\s-*(" 1)
    ("Classes"
-    "\\(^\\|\\s-\\)class\\s-+\\(\\sw+\\)\\s-*" 2)
+    "^\\s-*class\\s-+\\([a-zA-Z0-9_]+\\)\\s-*" 1)
    )
  "Imenu generic expression for PHP Mode. See `imenu-generic-expression'."
  )
 
 ;; Add "foreach" to conditional introducing keywords
 (defconst php-conditional-key nil)
-(let ((all-kws "for\\|if\\|do\\|else\\|while\\|switch")
+(let ((all-kws "for\\|if\\|do\\|else\\|while\\|switch\\|foreach\\|elseif\\|try\\|finally\\|try\\|catch all")
       (front   "\\<\\(")
       (back    "\\)\\>[^_]"))
-  (setq php-conditional-key (concat front all-kws "\\|foreach" back)))
+  (setq php-conditional-key (concat front all-kws back)))
 
-;; Create "default" symbol for GNU Emacs so that both Xemacs and GNU
+(defconst php-class-kwds "class\\|interface")
+
+(defconst php-class-key
+  (concat
+   "\\(" php-class-kwds "\\)\\s +"
+   c-symbol-key				      ;name of the class
+   "\\(\\s *extends\\s *" c-symbol-key "\\)?" ;maybe followed by superclass
+   "\\(\\s *implements *[^{]+{\\)?"	      ;maybe the adopted protocols list
+   ))
+
+;; Create "default" symbol for GNU Emacs so that both XEmacs and GNU
 ;; emacs can refer to the default face by a variable named "default".
 (unless (boundp 'default)
   (defvar default 'default))
