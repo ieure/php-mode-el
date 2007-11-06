@@ -5,17 +5,10 @@
 ;; Maintainer: Turadg Aleahmad <turadg at users.sourceforge.net>
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2007-10-23
+;; Modified: 2007-10-24
 ;; X-URL:   http://php-mode.sourceforge.net/
 
 (defconst php-mode-version "1.3.0"
-  "PHP Mode version number.")
-
-(defconst php-mode-modified
-  (save-excursion
-    (and
-     (re-search-backward "^;; Modified: \\(.*\\)" nil)
-     (match-string-no-properties 1)))
   "PHP Mode version number.")
 
 ;;; License
@@ -181,12 +174,24 @@ You can replace \"en\" with your ISO language code."
   :type 'hook
   :group 'php)
 
+(defcustom php-mode-pear-hook nil
+  "Hook called when a PHP PEAR file is opened with php-mode."
+  :type 'hook
+  :group 'php)
+
 (defcustom php-mode-force-pear nil
   "Normally PEAR coding rules are enforced only when the filename contains \"PEAR\"\
 Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
+(defconst php-mode-modified
+  (save-excursion
+    (and
+     (re-search-backward "^;; Modified: \\(.*\\)" nil)
+     (match-string-no-properties 1)))
+  "PHP Mode version number.")
+
 (defun php-mode-version ()
   "Display string describing the version of PHP mode"
   (interactive)
@@ -262,10 +267,18 @@ See `php-beginning-of-defun'."
 (define-derived-mode php-mode c-mode "PHP"
   "Major mode for editing PHP code.\n\n\\{php-mode-map}"
 
+  (c-add-language 'php-mode 'c-mode)
 
+  (c-lang-defconst block-stmt-1-kwds
+    php php-block-stmt-1-kwds)
+  (c-lang-defconst block-stmt-2-kwds
+    php php-block-stmt-2-kwds)
+  (c-lang-defconst c-class-decl-kwds
+    php php-class-decl-kwds)
+
+  ;; Specify that cc-mode recognize Javadoc comment style
   (set (make-local-variable 'c-doc-comment-style)
     '((php-mode . javadoc)))
-    "Specify that Cc-mode recognize Javadoc comment style.")
 
   (setq c-class-key php-class-key)
   (setq c-conditional-key php-conditional-key)
@@ -295,9 +308,7 @@ See `php-beginning-of-defun'."
           nil                               ; KEYWORDS-ONLY
           T                                 ; CASE-FOLD
           nil                               ; SYNTAX-ALIST
-          nil                               ; SYNTAX-BEGIN
-          ;;(font-lock-syntactic-keywords . php-font-lock-syntactic-keywords)
-          ))
+          nil))                             ; SYNTAX-BEGIN
   (modify-syntax-entry ?# "< b" php-mode-syntax-table)
 
   ;; Electric behaviour must be turned off, they do not work since
@@ -317,19 +328,13 @@ See `php-beginning-of-defun'."
   (set (make-local-variable 'next-line-add-newlines) nil)
 
   ;; PEAR coding standards
-  (make-local-hook 'php-mode-pear-hook)
   (add-hook 'php-mode-pear-hook
-	    (lambda nil (set (make-local-variable 'tab-width) 4)) nil t)
-  (add-hook 'php-mode-pear-hook
-	    (lambda nil (set (make-local-variable 'c-basic-offset) 4)) nil t)
-  (add-hook 'php-mode-pear-hook
-	    (lambda nil (set (make-local-variable 'c-hanging-comment-ender-p) nil)) nil t)
-  (add-hook 'php-mode-pear-hook
-	    (lambda nil (set (make-local-variable 'indent-tabs-mode) nil)) nil t)
-  (add-hook 'php-mode-pear-hook
-	    (lambda nil (c-set-offset 'block-open' - )) nil t)
-  (add-hook 'php-mode-pear-hook
-	    (lambda nil (c-set-offset 'block-close' 0 )) nil t)
+	    (lambda ()
+	      (set (make-local-variable 'tab-width) 4)
+	      (set (make-local-variable 'c-basic-offset) 4)
+	      (set (make-local-variable 'indent-tabs-mode) nil)
+	      (c-set-offset 'block-open' - )
+	      (c-set-offset 'block-close' 0 )) nil t)
 
   (if (or php-mode-force-pear
           (and (stringp buffer-file-name)
