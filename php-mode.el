@@ -5,7 +5,7 @@
 ;; Maintainer: Turadg Aleahmad <turadg at users.sourceforge.net>
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2007-04-21
+;; Modified: 2007-10-22
 ;; X-URL:   http://php-mode.sourceforge.net/
 
 (defconst php-version "1.3.0"
@@ -63,7 +63,8 @@
 ;; Rosenfeld, Fred Yankowski, Craig Andrews, John Keller, Ryan
 ;; Sammartino, ppercot, Valentin Funk, Stig Bakken, Gregory Stark,
 ;; Chris Morris, Nils Rennebarth, Gerrit Riessen, Eric Mc Sween,
-;; Ville Skytta, Giacomo Tesio, Lennart Borgman, Stefan Monnier
+;; Ville Skytta, Giacomo Tesio, Lennart Borgman, Stefan Monnier,
+;; Aaron S. Hawley
 
 ;;; Changelog:
 
@@ -101,7 +102,7 @@
 (require 'etags)
 (eval-when-compile
   (require 'regexp-opt))
-
+
 ;; Local variables
 (defgroup php nil
   "Major mode for editing PHP code."
@@ -178,7 +179,40 @@ You can replace \"en\" with your ISO language code."
 Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
+
+(defconst php-beginning-of-defun-regexp
+  "^\\s *function\\s +&?\\(\\(\\sw\\|\\s_\\)+\\)\\s *("
+  "Regular expression for a PHP function.")
 
+(defun php-beginning-of-defun (&optional arg)
+  "Move to the beginning of the ARGth PHP function from point.
+Implements PHP version of `beginning-of-defun-function'."
+  (interactive "p")
+  (let ((arg (or arg 1)))
+    (while (> arg 0)
+      (re-search-backward php-beginning-of-defun-regexp
+			  nil 'noerror)
+      (setq arg (1- arg)))
+    (while (< arg 0)
+      (end-of-line 1)
+      (let ((opoint (point)))
+	(beginning-of-defun 1)
+	(forward-list 2)
+	(forward-line 1)
+	(if (eq opoint (point))
+	    (re-search-forward php-beginning-of-defun-regexp
+			       nil 'noerror))
+	(setq arg (1+ arg))))))
+
+(defun php-end-of-defun (&optional arg)
+  "Move the end of the ARGth PHP function from point.
+Implements PHP befsion of `end-of-defun-function'
+
+See `php-beginning-of-defun'."
+  (interactive "p")
+  (php-beginning-of-defun (- (or arg 1))))
+
+
 (defvar php-completion-table nil
   "Obarray of tag names defined in current tags table and functions know to PHP.")
 
@@ -291,8 +325,19 @@ Turning this on will force PEAR rules on all PHP files."
   (setq indent-region-function 'php-cautious-indent-region)
   (setq c-special-indent-hook nil)
 
-  (run-hooks 'php-mode-hook))
+  (set (make-local-variable 'beginning-of-defun-function)
+       'php-beginning-of-defun)
+  (set (make-local-variable 'end-of-defun-function)
+       'php-end-of-defun)
+  (set (make-local-variable 'open-paren-in-column-0-is-defun-start)
+       nil)
+  (set (make-local-variable 'defun-prompt-regexp)
+       "^\\s *function\\s +&?\\(\\(\\sw\\|\\s_\\)+\\)\\s *")
+  (set (make-local-variable 'add-log-current-defun-header-regexp)
+       php-beginning-of-defun-regexp)
 
+  (run-hooks 'php-mode-hook))
+
 ;; Make a menu keymap (with a prompt string)
 ;; and make it the menu bar item's definition.
 (define-key php-mode-map [menu-bar] (make-sparse-keymap))
@@ -308,7 +353,7 @@ Turning this on will force PEAR rules on all PHP files."
 (define-key php-mode-map
   [menu-bar php search-documentation]
   '("Search documentation" . php-search-documentation))
-
+
 ;; Define function name completion function
 (defun php-complete-function ()
   "Perform function completion on the text around point.
@@ -436,7 +481,7 @@ for \\[find-tag] (which see)."
     (if arglist
         (message "Arglist for %s: %s" tagname arglist)
         (message "unknown function: %s" tagname))))
-
+
 ;; Define function documentation function
 (defun php-search-documentation ()
   "Search PHP documentation for the word at the point."
@@ -468,19 +513,21 @@ for \\[find-tag] (which see)."
 (define-key php-mode-map
   '[(control .)]
   'php-show-arglist)
-
+
 (defconst php-constants
   (eval-when-compile
     (regexp-opt
      '(;; core constants
        "__LINE__" "__FILE__"
+       "__FUNCTION__" "__CLASS__" "__METHOD__"
        "PHP_OS" "PHP_VERSION"
        "TRUE" "FALSE" "NULL"
-       "E_ERROR" "E_NOTICE" "E_PARSE" "E_WARNING" "E_ALL"
+       "E_ERROR" "E_NOTICE" "E_PARSE" "E_WARNING" "E_ALL" "E_STRICT"
        "E_USER_ERROR" "E_USER_WARNING" "E_USER_NOTICE"
        "DEFAULT_INCLUDE_PATH" "PEAR_INSTALL_DIR" "PEAR_EXTENSION_DIR"
        "PHP_BINDIR" "PHP_LIBDIR" "PHP_DATADIR" "PHP_SYSCONFDIR"
        "PHP_LOCALSTATEDIR" "PHP_CONFIG_FILE_PATH"
+       "PHP_EOL"
 
        ;; from ext/standard:
        "EXTR_OVERWRITE" "EXTR_SKIP" "EXTR_PREFIX_SAME"
@@ -738,8 +785,9 @@ for \\[find-tag] (which see)."
 ;        "ORA_BIND_INOUT" "ORA_BIND_IN" "ORA_BIND_OUT"
 ;        "ORA_FETCHINTO_ASSOC" "ORA_FETCHINTO_NULLS"
 ;        "PREG_PATTERN_ORDER" "PREG_SET_ORDER" "PREG_SPLIT_NO_EMPTY"
-;        "PREG_SPLIT_DELIM_CAPTURE" "PGSQL_ASSOC" "PGSQL_NUM"
-;        "PGSQL_BOTH" "PRINTER_COPIES" "PRINTER_MODE" "PRINTER_TITLE"
+;        "PREG_SPLIT_DELIM_CAPTURE" 
+;        "PGSQL_ASSOC" "PGSQL_NUM" "PGSQL_BOTH" 
+;        "PRINTER_COPIES" "PRINTER_MODE" "PRINTER_TITLE"
 ;        "PRINTER_DEVICENAME" "PRINTER_DRIVERVERSION"
 ;        "PRINTER_RESOLUTION_Y" "PRINTER_RESOLUTION_X" "PRINTER_SCALE"
 ;        "PRINTER_BACKGROUND_COLOR" "PRINTER_PAPER_LENGTH"
@@ -949,7 +997,7 @@ for \\[find-tag] (which see)."
 
     ;; warn about '$' immediately after ->
     '("\\$\\(?:\\sw\\|\\s_\\)+->\\s-*\\(\\$\\)\\(\\(?:\\sw\\|\\s_\\)+\\)"
-      (1 font-lock-warning-face) (2 default))
+      (1 font-lock-warning-face) (2 php-default-face))
 
     ;; warn about $word.word -- it could be a valid concatenation,
     ;; but without any spaces we'll assume $word->word was meant.
@@ -964,7 +1012,7 @@ for \\[find-tag] (which see)."
       1 font-lock-type-face)
 
     ;; PHP5: function declarations may contain classes as parameters type
-    `(,(concat "[(,]\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-+\\$\\(?:\\sw\\|\\s_\\)+\\>")
+    `(,(concat "[(,]\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-+&?\\$\\(?:\\sw\\|\\s_\\)+\\>")
       1 font-lock-type-face)
 
     ;; Fontify variables and function calls
@@ -973,16 +1021,19 @@ for \\[find-tag] (which see)."
       (1 font-lock-constant-face nil nil)) ; $_GET & co
     '("\\$\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face)) ; $variable
     '("->\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face t t)) ; ->variable
-    '("->\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" . (1 default t t)) ; ->function_call
-    '("\\(?:\\sw\\|\\s_\\)+::\\(?:\\sw\\|\\s_\\)+\\s-*(" . default) ; class::method call
-    ;;'("\\<\\(?:\\sw\\|\\s_\\)+\\s-*[[(]" . default)	; word( or word[
-    `("\\<[0-9]+" . php-default-face)		; number (also matches word)
+    '("->\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" . (1 php-default-face t t)) ; ->function_call
+    '("\\(?:\\sw\\|\\s_\\)+::\\(?:\\sw\\|\\s_\\)+\\s-*(" . font-lock-type-face) ; class::method call
+    '("\\(\\(?:\\sw\\|\\s_\\)+::\\(?:\\sw\\|\\s_\\)+\\)" . font-lock-type-face) ; class::constant call
+    '("::\\(\\(?:\\sw\\|\\s_\\)+\\>[^(]\\)" . (1 font-lock-type-face)) ; class::constant
+    '("const\\s +\\(\\(\\sw\\|\\s_\\)+\\)" . (1 font-lock-type-face)) ; class::constant definition
+    '("\\<\\(?:\\sw\\|\\s_\\)+\\s-*[[(]" . php-default-face)	; word( or word[
+    '("\\<[0-9]+" . php-default-face)		; number (also matches word)
 
     ;; Warn on any words not already fontified
     '("\\<\\(?:\\sw\\|\\s_\\)+\\>" . font-lock-warning-face)
+
     ))
   "Gauchy level highlighting for PHP mode.")
-
 
 ;; Define the imenu-generic-expression for PHP mode.
 ;; To use, execute M-x imenu, then click on Functions or Classes,
@@ -990,33 +1041,44 @@ for \\[find-tag] (which see)."
 ;; [Contributed by Gerrit Riessen]
 (defvar php-imenu-generic-expression
  '(
-   ("Functions"
+   ("All Functions"
     "^\\s-*function\\s-+\\([a-zA-Z0-9_]+\\)\\s-*(" 1)
    ("Classes"
     "^\\s-*class\\s-+\\([a-zA-Z0-9_]+\\)\\s-*" 1)
+   ("Public Methods"
+    "^\\s-*public function\\s-+\\([a-zA-Z0-9_]+\\)\\s-*(" 1)
+   ("Protected Methods"
+    "^\\s-*protected function\\s-+\\([a-zA-Z0-9_]+\\)\\s-*(" 1)
+   ("Private Methods"
+    "^\\s-*private function\\s-+\\([a-zA-Z0-9_]+\\)\\s-*(" 1)
    )
  "Imenu generic expression for PHP Mode. See `imenu-generic-expression'."
  )
 
-;; Add "foreach" to conditional introducing keywords
-(defconst php-conditional-key nil)
-(let ((all-kws "for\\|if\\|do\\|else\\|while\\|switch\\|foreach\\|elseif\\|try\\|finally\\|try\\|catch all")
-      (front   "\\<\\(")
-      (back    "\\)\\>[^_]"))
-  (setq php-conditional-key (concat front all-kws back)))
+(defconst php-block-stmt-1-kwds '("do" "else" "finally" "try"))
+(defconst php-block-stmt-2-kwds
+  '("for" "if" "while" "switch" "foreach" "elseif"  "catch all"))
 
-(defconst php-class-kwds "class\\|interface")
+;; Use of `c-conditional-key' deprecated in Emacs 22.
+(defconst php-conditional-key
+  (concat
+   "\\<\\("
+   (regexp-opt (append php-block-stmt-1-kwds php-block-stmt-2-kwds)
+   "\\)\\>[^_]")))
+
+(defconst php-class-decl-kwds '("class" "interface"))
 
 (defconst php-class-key
   (concat
-   "\\(" php-class-kwds "\\)\\s +"
-   c-symbol-key				      ;name of the class
-   "\\(\\s *extends\\s *" c-symbol-key "\\)?" ;maybe followed by superclass
-   "\\(\\s *implements *[^{]+{\\)?"	      ;maybe the adopted protocols list
-   ))
+   "\\(" (regexp-opt php-class-decl-kwds) "\\)\\s +"
+   c-symbol-key					;; Class name.
+   "\\(\\s *extends\\s *" c-symbol-key "\\)?"	;; Name of superclass.
+   "\\(\\s *implements *[^{]+{\\)?")) ;; List of any adopted protocols.
 
-;; Create "default" symbol for GNU Emacs so that both XEmacs and GNU
-;; emacs can refer to the default face by a variable named "default".
+;; Create "php-default-face" symbol for GNU Emacs so that both XEmacs
+;; and GNU emacs can refer to the default face.
+(unless (boundp 'php-default-face)
+   (defvar php-default-face 'php-default-face))
 
 ;; Create faces for XEmacs
 (when (featurep 'xemacs)
