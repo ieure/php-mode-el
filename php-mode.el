@@ -1,31 +1,33 @@
 ;;; php-mode.el --- major mode for editing PHP code
 
-;; Copyright (C) 1999-2004 Turadg Aleahmad
+;; Copyright (C) 1999, 2000, 2001, 2003, 2004 Turadg Aleahmad
 
-;; Maintainer: Turadg Aleahmad <turadg at users.sourceforge.net>
+;; Maintainer: Aaron S. Hawley <ashawley at users.sourceforge.net>
+;; Author: Turadg Aleahmad, 1999-2004
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
 ;; Modified: 2007-11-06
 ;; X-URL:   http://php-mode.sourceforge.net/
 
-(defconst php-mode-version-number "1.3.0"
+(defconst php-mode-version-number "1.4.0-beta"
   "PHP Mode version number.")
 
 ;;; License
 
-;; This program is free software; you can redistribute it and/or
+;; This file is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
-;; as published by the Free Software Foundation; either version 2
+;; as published by the Free Software Foundation; either version 3
 ;; of the License, or (at your option) any later version.
 
-;; This program is distributed in the hope that it will be useful,
+;; This file is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program; if not, write to the Free Software
-;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+;; along with this file; if not, write to the Free Software
+;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+;; 02110-1301, USA.
 
 ;;; Usage
 
@@ -64,10 +66,17 @@
 ;; Sammartino, ppercot, Valentin Funk, Stig Bakken, Gregory Stark,
 ;; Chris Morris, Nils Rennebarth, Gerrit Riessen, Eric Mc Sween,
 ;; Ville Skytta, Giacomo Tesio, Lennart Borgman, Stefan Monnier,
-;; Aaron S. Hawley
+;; Aaron S. Hawley, Ian Eure, Bill Lovett
 
 ;;; Changelog:
 
+;; 1.4
+;;   Updated GNU GPL to version 3.  Ported to Emacs 22 (CC mode
+;;   5.31). M-x php-mode-versoin shows version.  Provide end-of-defun
+;;   beginning-of-defun functionality. Support add-log library.
+;;   Fix __CLASS__ constant (Ian Eure).  Allow imenu to see visibility
+;;   declarations -- "private", "public", "protected". (Bill Lovett)
+;;
 ;; 1.3
 ;;   Changed the definition of # using a tip from Stefan
 ;;   Monnier. This corrected highlighting and indentation. (Lennart
@@ -79,7 +88,7 @@
 ;;   Implemented php-complete-function, M-tab (Engelke Eschner)
 ;;   Re-enabled # comment detection in GNU Emacs (Urban Müller)
 ;;   Fixed some keybindings and default settings (Engelke Eschner)
-
+;;
 ;; 1.1
 ;;   Added PHP5 support (Giacomo Tesio)
 ;;     known problem: doesn't highlight after first 'implements'
@@ -1017,6 +1026,7 @@ for \\[find-tag] (which see)."
     '("\"[[:space:]]+\\([a-z:]+=\\)" (1 font-lock-constant-face))
 
     ;; HTML entities
+    ;;'("&\\w+;" . font-lock-variable-name-face)
 
     ;; warn about '$' immediately after ->
     '("\\$\\(?:\\sw\\|\\s_\\)+->\\s-*\\(\\$\\)\\(\\(?:\\sw\\|\\s_\\)+\\)"
