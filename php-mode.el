@@ -5,7 +5,7 @@
 ;; Maintainer: Turadg Aleahmad <turadg at users.sourceforge.net>
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2007-10-24
+;; Modified: 2007-10-26
 ;; X-URL:   http://php-mode.sourceforge.net/
 
 (defconst php-mode-version "1.3.0"
@@ -188,7 +188,7 @@ Turning this on will force PEAR rules on all PHP files."
 (defconst php-mode-modified
   (save-excursion
     (and
-     (re-search-backward "^;; Modified: \\(.*\\)" nil)
+     (re-search-backward "^;; Modified: \\(.*\\)" nil 'noerror)
      (match-string-no-properties 1)))
   "PHP Mode version number.")
 
