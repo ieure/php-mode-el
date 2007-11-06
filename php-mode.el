@@ -5,10 +5,10 @@
 ;; Maintainer: Turadg Aleahmad <turadg at users.sourceforge.net>
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2007-10-26
+;; Modified: 2007-11-06
 ;; X-URL:   http://php-mode.sourceforge.net/
 
-(defconst php-mode-version "1.3.0"
+(defconst php-mode-version-number "1.3.0"
   "PHP Mode version number.")
 
 ;;; License
@@ -157,7 +157,7 @@ You can replace \"en\" with your ISO language code."
   :group 'php)
 
 ;;;###autoload
-(defcustom php-file-patterns (list "\\.php[s34]?\\'" "\\.phtml\\'" "\\.inc\\'")
+(defcustom php-file-patterns '("\\.php[s34]?\\'" "\\.phtml\\'" "\\.inc\\'")
   "List of file patterns for which to automatically invoke php-mode."
   :type '(repeat (regexp :tag "Pattern"))
   :set (lambda (sym val)
@@ -196,7 +196,7 @@ Turning this on will force PEAR rules on all PHP files."
   "Display string describing the version of PHP mode"
   (interactive)
   (message "PHP mode %s of %s"
-	   php-mode-version php-mode-modified))
+	   php-mode-version-number php-mode-modified))
 
 (defconst php-beginning-of-defun-regexp
   "^\\s *function\\s +&?\\(\\(\\sw\\|\\s_\\)+\\)\\s *("
@@ -266,22 +266,23 @@ See `php-beginning-of-defun'."
 ;;;###autoload
 (define-derived-mode php-mode c-mode "PHP"
   "Major mode for editing PHP code.\n\n\\{php-mode-map}"
+;;   (c-add-language 'php-mode 'c-mode)
+ 
+;;   (c-lang-defconst c-block-stmt-1-kwds
+;;     php php-block-stmt-1-kwds)
+  (set (make-local-variable 'c-block-stmt-1-key) php-block-stmt-1-key)
 
-  (c-add-language 'php-mode 'c-mode)
-
-  (c-lang-defconst block-stmt-1-kwds
-    php php-block-stmt-1-kwds)
-  (c-lang-defconst block-stmt-2-kwds
-    php php-block-stmt-2-kwds)
-  (c-lang-defconst c-class-decl-kwds
-    php php-class-decl-kwds)
-
+;;   (c-lang-defconst c-block-stmt-2-kwds
+;;     php php-block-stmt-2-kwds)
+  (set (make-local-variable 'c-block-stmt-2-key) php-block-stmt-2-key)
   ;; Specify that cc-mode recognize Javadoc comment style
   (set (make-local-variable 'c-doc-comment-style)
     '((php-mode . javadoc)))
 
-  (setq c-class-key php-class-key)
-  (setq c-conditional-key php-conditional-key)
+;;   (c-lang-defconst c-class-decl-kwds
+;;     php php-class-decl-kwds)
+  (set (make-local-variable 'c-class-key) php-class-key)
+  (set (make-local-variable 'c-conditional-key) php-conditional-key)
 
   (defvar php-mode-syntax-table php-mode-syntax-table)
   ;; this line makes $ into punctuation instead of a word constituent
@@ -583,7 +584,7 @@ for \\[find-tag] (which see)."
        "LOG_NDELAY" "LOG_NOWAIT" "LOG_PERROR"
 
        ;; Disabled by default because they slow buffer loading
-       ;; If you have use for them, decomment the strings
+       ;; If you have use for them, uncomment the strings
        ;; that you want colored.
        ;; To compile, you may have to increase 'max-specpdl-size'
 
@@ -1079,12 +1080,10 @@ for \\[find-tag] (which see)."
 (defconst php-block-stmt-2-kwds
   '("for" "if" "while" "switch" "foreach" "elseif"  "catch all"))
 
-;; Use of `c-conditional-key' deprecated in Emacs 22.
-(defconst php-conditional-key
-  (concat
-   "\\<\\("
-   (regexp-opt (append php-block-stmt-1-kwds php-block-stmt-2-kwds)
-   "\\)\\>[^_]")))
+(defconst php-block-stmt-1-key
+  (regexp-opt php-block-stmt-1-kwds))
+(defconst php-block-stmt-2-key
+  (regexp-opt php-block-stmt-2-kwds))
 
 (defconst php-class-decl-kwds '("class" "interface"))
 
