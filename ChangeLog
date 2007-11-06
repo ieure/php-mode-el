@@ -1,0 +1,114 @@
+2007-11-06  Aaron S. Hawley  <ashawley at sourceforge.net>
+
+	* php-mode.el: Update file header for 1.4 beta release.  Release
+	under version 3 of the GNU GPL or later.
+
+2007-11-06  Aaron S. Hawley  <ashawley at sourceforge.net>
+
+	* php-mode.el (php-mode-version): Rename php-mode-version-number.
+	(php-mode): Use setq rather than c-lang-defconst to support CC
+	Mode version 5.31 in Emacs 22.
+	(php-constants): "decomment" -> "uncomment".
+	(php-conditional-key): Delete constant.
+	(php-block-stmt-1-key, php-block-stmt-2-key): Generate from values
+	of php-block-stmt-1-kwds, php-block-stmt-2-kwds, respectively.
+
+2007-11-05  Aaron S. Hawley  <ashawley at sourceforge.net>
+
+	* php-mode.texi (Indentation): Explain CC mode customizations.
+
+2007-10-27  Aaron S. Hawley  <ashawley at sourceforge.net>
+
+	* php-mode.texi: Rename manual from "Emacs PHP mode" to "PHP Mode
+	Manual".  Add local variable compile-command.
+	(Top): Add new sections to menu.
+	(Introduction): Add index entries.
+	(Electricity): Add index entries.  Give example electric
+	characters.  Explain how to temporarily shut off electricity.
+	(Motion): Add index entries.
+	(Indentation): Add index entries.  Explain indentation rules.
+	Mention HTML indentation.
+	(Embedded HTML): New appendix section.
+	(Concept Index): Renamed from Index.
+	(Function Index, Keyboard Index): New indexes.
+
+2007-10-26  Aaron S. Hawley  <ashawley at sourceforge.net>
+
+	* php-mode.el (php-mode-modified): Silence error for
+	re-search-backward.
+	(php-check-html-for-indentation): Fix error "Invalid search
+	bound (wrong side of point)".  Have HTML regexp match opening
+	elements, with attributes.
+
+2007-10-25  Aaron S. Hawley  <ashawley at sourceforge.net>
+
+	* php-mode.texi: File added.
+
+	* php-mode.el (php-check-html-for-indentation): Search for HTML
+	tags only on current line.
+	(php-mode): Delete variables that generate compiler warnings.
+	(php-mode-force-pear): Define customization.
+
+2007-10-24  Aaron S. Hawley  <ashawley at sourceforge.net>
+
+	* php-mode.el (php-mode-modified): New constant.
+	(php-speedbar-config): Use boundp for speedbar conditional.
+	(php-mode-version): New function.
+	(php-mode): Specify Javadoc as c-doc-comment-style.
+	(php-imenu-generic-expression): Replace [a-zA-z0-9]
+	with [[:alnum:]].
+
+2007-10-23  Aaron S. Hawley  <ashawley at sourceforge.net>
+
+        * php-mode.el (php-font-lock-keywords-2): Fix by Ian Eure for
+        __CLASS__ constant.
+
+2007-10-22  Aaron S. Hawley  <ashawley at sourceforge.net>
+
+        * php-mode.el: Add form feed characters between sections.
+        (php-beginning-of-defun-regexp): New constant.
+        (php-beginning-of-defun, php-end-of-defun): New functions.
+        (php-mode): Call (c-add-language).  Provide local versions
+	of {beginning,end}-of-defun-function, set
+	open-paren-in-column-0-is-defun-start to nil, provide value for
+	defun-prompt-regexp and add-log-current-defun-header-regexp.
+        (php-constants): Add __FUNCTION__, __CLASS__, __METHOD__,
+	E_STRICT, PHP_EOL.  Keep PREG_*, PGSQL_*, and PRINTER_* constants
+	on separate lines.
+        (php-font-lock-keywords-3): Fontify "class::member".  Allow
+	call-by-reference for PHP 5 function declarations.  Use
+	php-default-face everywhere.
+        (php-imenu-generic-expression) Imenu fix by Bill Lovett for
+	functions with visibility declarations (private, public,
+	protected).
+        (php-conditional-key): Rewritten using php-block-stmt-1-kwds and
+	php-block-stmt-2-kwds.
+        (php-block-stmt-1-kwds): New constant.
+        (php-block-stmt-1-kwds): New constant.
+        (php-class-kwds): Removed.
+        (php-class-decl-kwds): New constant.
+        (php-class-key): Don't use php-class-kwds.
+
+2007-04-21  Lennart Borgman  <lennart.borgman at gmail.com>
+
+	* php-mode.el: Release separately by Lennart Borgman on 2007-04-21
+	as version 1.3.0.  Documentation changes and fixes of XEmacs
+	conditionals throughout code.
+	(php-default-face): New font-lock face.
+	(php-speedbar-config, php-mode-speedbar-open): Ignore php-file
+	patterns option, by default set to
+	(php-manual-url, php-search-url, php-completion-file)
+	(php-manual-path): Fix documentation strings.
+	(php-mode-user-hook): Renamed to php-mode-hook.
+	(xemacsp): Removed constant.
+	(php-check-html-for-indentation, php-cautious-indent-region)
+	(php-cautious-indent-line, php-warned-bad-indent): Changed the
+	highlighting of the HTML part.  Use or suggest mumamo.
+	(php-mode): Don't use comment-start, comment-end and
+	comment-start-skip.  Changed the definition of # using a tip from
+	Stefan Monnier. This corrected highlighting and indentation.  Let
+	Customization handle Speedbar setting.
+	(php-font-lock-keywords-1): Use php-default-face.
+	(php-font-lock-keywords-3): Improved HTML highlighting.  Use
+	php-default-face. Add warnings for words not fontified.
+	(php-font-lock-syntactic-keywords): Removed constant.
