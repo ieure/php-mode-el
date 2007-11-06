@@ -5,7 +5,7 @@
 ;; Maintainer: Turadg Aleahmad <turadg at users.sourceforge.net>
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2007-10-22
+;; Modified: 2007-10-23
 ;; X-URL:   http://php-mode.sourceforge.net/
 
 (defconst php-version "1.3.0"
@@ -944,7 +944,7 @@ for \\[find-tag] (which see)."
    (list
 
     ;; class declaration
-    '("\\<\\(class\\|interface\\)[ \t]*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
+    '("[^_]\\<\\(class\\|interface\\)[ \t]*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
       (1 font-lock-keyword-face) (2 font-lock-type-face nil t))
     ;; handle several words specially, to include following word,
     ;; thereby excluding it from unknown-symbol checks later
@@ -1022,10 +1022,8 @@ for \\[find-tag] (which see)."
     '("\\$\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face)) ; $variable
     '("->\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face t t)) ; ->variable
     '("->\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" . (1 php-default-face t t)) ; ->function_call
-    '("\\(?:\\sw\\|\\s_\\)+::\\(?:\\sw\\|\\s_\\)+\\s-*(" . font-lock-type-face) ; class::method call
-    '("\\(\\(?:\\sw\\|\\s_\\)+::\\(?:\\sw\\|\\s_\\)+\\)" . font-lock-type-face) ; class::constant call
-    '("::\\(\\(?:\\sw\\|\\s_\\)+\\>[^(]\\)" . (1 font-lock-type-face)) ; class::constant
-    '("const\\s +\\(\\(\\sw\\|\\s_\\)+\\)" . (1 font-lock-type-face)) ; class::constant definition
+    '("\\(\\(?:\\sw\\|\\s_\\)+\\)::\\(?:\\sw\\|\\s_\\)+\\s-*(?" . (1 font-lock-type-face)) ; class::member
+    '("::\\(\\(?:\\sw\\|\\s_\\)+\\>[^(]\\)" . (1 php-default-face)) ; class::constant
     '("\\<\\(?:\\sw\\|\\s_\\)+\\s-*[[(]" . php-default-face)	; word( or word[
     '("\\<[0-9]+" . php-default-face)		; number (also matches word)
 
