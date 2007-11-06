@@ -8,7 +8,14 @@
 ;; Modified: 2007-10-23
 ;; X-URL:   http://php-mode.sourceforge.net/
 
-(defconst php-version "1.3.0"
+(defconst php-mode-version "1.3.0"
+  "PHP Mode version number.")
+
+(defconst php-mode-modified
+  (save-excursion
+    (and
+     (re-search-backward "^;; Modified: \\(.*\\)" nil)
+     (match-string-no-properties 1)))
   "PHP Mode version number.")
 
 ;;; License
@@ -180,6 +187,12 @@ Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
+(defun php-mode-version ()
+  "Display string describing the version of PHP mode"
+  (interactive)
+  (message "PHP mode %s of %s"
+	   php-mode-version php-mode-modified))
+
 (defconst php-beginning-of-defun-regexp
   "^\\s *function\\s +&?\\(\\(\\sw\\|\\s_\\)+\\)\\s *("
   "Regular expression for a PHP function.")
@@ -249,6 +262,10 @@ See `php-beginning-of-defun'."
 (define-derived-mode php-mode c-mode "PHP"
   "Major mode for editing PHP code.\n\n\\{php-mode-map}"
 
+
+  (set (make-local-variable 'c-doc-comment-style)
+    '((php-mode . javadoc)))
+    "Specify that Cc-mode recognize Javadoc comment style.")
 
   (setq c-class-key php-class-key)
   (setq c-conditional-key php-conditional-key)
@@ -1040,15 +1057,15 @@ for \\[find-tag] (which see)."
 (defvar php-imenu-generic-expression
  '(
    ("All Functions"
-    "^\\s-*function\\s-+\\([a-zA-Z0-9_]+\\)\\s-*(" 1)
+    "^\\s-*function\\s-+\\([[:alnum:]_]+\\)\\s-*(" 1)
    ("Classes"
-    "^\\s-*class\\s-+\\([a-zA-Z0-9_]+\\)\\s-*" 1)
+    "^\\s-*class\\s-+\\([[:alnum:]_]+\\)\\s-*" 1)
    ("Public Methods"
-    "^\\s-*public function\\s-+\\([a-zA-Z0-9_]+\\)\\s-*(" 1)
+    "^\\s-*public function\\s-+\\([[:alnum:]_]+\\)\\s-*(" 1)
    ("Protected Methods"
-    "^\\s-*protected function\\s-+\\([a-zA-Z0-9_]+\\)\\s-*(" 1)
+    "^\\s-*protected function\\s-+\\([[:alnum:]_]+\\)\\s-*(" 1)
    ("Private Methods"
-    "^\\s-*private function\\s-+\\([a-zA-Z0-9_]+\\)\\s-*(" 1)
+    "^\\s-*private function\\s-+\\([[:alnum:]_]+\\)\\s-*(" 1)
    )
  "Imenu generic expression for PHP Mode. See `imenu-generic-expression'."
  )
