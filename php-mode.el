@@ -5,10 +5,10 @@
 ;; Maintainer: Turadg Aleahmad <turadg at users.sourceforge.net>
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2005-07-27
+;; Modified: 2007-04-21
 ;; X-URL:   http://php-mode.sourceforge.net/
 
-(defconst php-version "1.2.0"
+(defconst php-version "1.3.0"
   "PHP Mode version number.")
 
 ;;; License
@@ -29,16 +29,13 @@
 
 ;;; Usage
 
-;; Rename this file to php-mode.el if it isn't already then place it in
-;; your Emacs lisp path (eg. site-lisp) and add to your .emacs file:
+;; Put this file in your Emacs lisp path (eg. site-lisp) and add to
+;; your .emacs file:
+;;
 ;;   (require 'php-mode)
 
-;; If you want colorization, turn on global-font-lock or
-;; add this to your .emacs:
-;;   (add-hook 'php-mode-user-hook 'turn-on-font-lock)
-
 ;; To use abbrev-mode, add lines like this:
-;;   (add-hook 'php-mode-user-hook
+;;   (add-hook 'php-mode-hook
 ;;     '(lambda () (define-abbrev php-mode-abbrev-table "ex" "extends")))
 
 ;; To make php-mode compatible with html-mode, see http://php-mode.sf.net
@@ -66,10 +63,16 @@
 ;; Rosenfeld, Fred Yankowski, Craig Andrews, John Keller, Ryan
 ;; Sammartino, ppercot, Valentin Funk, Stig Bakken, Gregory Stark,
 ;; Chris Morris, Nils Rennebarth, Gerrit Riessen, Eric Mc Sween,
-;; Ville Skytta, Giacomo Tesio
+;; Ville Skytta, Giacomo Tesio, Lennart Borgman, Stefan Monnier
 
 ;;; Changelog:
 
+;; 1.3
+;;   Changed the definition of # using a tip from Stefan
+;;   Monnier. This corrected highlighting and indentation. (Lennart
+;;   Borgman)
+;;   Changed the highlighting of the HTML part. (Lennart Borgman)
+;;
 ;; 1.2
 ;;   Implemented php-show-arglist, C-. (Engelke Eschner)
 ;;   Implemented php-complete-function, M-tab (Engelke Eschner)
@@ -105,46 +108,67 @@
   :prefix "php-"
   :group 'languages)
 
+(defcustom php-default-face 'default
+  "Default face in php-mode buffers."
+  :type 'face
+  :group 'php)
+
 (defcustom php-speedbar-config t
-  "*When set to true automatically configures Speedbar to observe PHP files.\
+  "When set to true automatically configures Speedbar to observe PHP files.\
 Ignores php-file patterns option; fixed to expression \"\\.\\(inc\\|php[s34]?\\)\""
   :type 'boolean
+  :set (lambda (sym val)
+         (set-default sym val)
+         (if (and val (boundp 'speedbar))
+             (speedbar-add-supported-extension
+	      "\\.\\(inc\\|php[s34]?\\|phtml\\)")))
   :group 'php)
 
 (defcustom php-mode-speedbar-open nil
   "Normally php-mode starts with the speedbar closed.\
 Turning this on will open it whenever php-mode is loaded."
   :type 'boolean
+  :set (lambda (sym val)
+         (set-default sym val)
+         (when val
+             (speedbar 1)))
   :group 'php)
 
 (defcustom php-manual-url "http://www.php.net/manual/en/"
-  "*URL at which to find PHP manual.\
+  "URL at which to find PHP manual.\
 You can replace \"en\" with your ISO language code."
   :type 'string
   :group 'php)
 
 (defcustom php-search-url "http://www.php.net/"
-  "*URL at which to search for documentation on a word"
+  "URL at which to search for documentation on a word"
   :type 'string
   :group 'php)
 
 (defcustom php-completion-file ""
-  "*Path to the file which contains the function names known to PHP"
+  "Path to the file which contains the function names known to PHP"
   :type 'string
   :group 'php)
 
 (defcustom php-manual-path ""
-  "*Path to the directory which contains the PHP manual"
+  "Path to the directory which contains the PHP manual"
   :type 'string
   :group 'php)
 
 ;;;###autoload
 (defcustom php-file-patterns (list "\\.php[s34]?\\'" "\\.phtml\\'" "\\.inc\\'")
-  "*List of file patterns for which to automatically invoke php-mode."
+  "List of file patterns for which to automatically invoke php-mode."
   :type '(repeat (regexp :tag "Pattern"))
+  :set (lambda (sym val)
+         (set-default sym val)
+         (let ((php-file-patterns-temp val))
+           (while php-file-patterns-temp
+             (add-to-list 'auto-mode-alist
+                          (cons (car php-file-patterns-temp) 'php-mode))
+             (setq php-file-patterns-temp (cdr php-file-patterns-temp)))))
   :group 'php)
 
-(defcustom php-mode-user-hook nil
+(defcustom php-mode-hook nil
   "List of functions to be executed on entry to php-mode"
   :type 'hook
   :group 'php)
@@ -158,17 +182,39 @@ Turning this on will force PEAR rules on all PHP files."
 (defvar php-completion-table nil
   "Obarray of tag names defined in current tags table and functions know to PHP.")
 
-;; Note whether we're in XEmacs
-(defconst xemacsp (string-match "Lucid\\|XEmacs" emacs-version)
-  "Non nil if using XEmacs.")
+(defvar php-warned-bad-indent nil)
+(make-variable-buffer-local 'php-warned-bad-indent)
+
+;; Do it but tell it is not good if html tags in buffer.
+(defun php-check-html-for-indentation ()
+  (let ((html-tag-re "</?\\sw+.*?>")
+        (here (point)))
+    (if (not (or (re-search-forward html-tag-re (line-end-position) t)
+                 (re-search-backward html-tag-re (line-beginning-position) t)))
+        t
+      (goto-char here)
+      (setq php-warned-bad-indent t)
+      (lwarn 'php-indent :warning
+	     "\n\t%s\n\t%s\n\t%s\n"
+	     "Indentation fails badly with mixed HTML and PHP."
+	     "Look for an Emacs Lisp library that supports \"multiple"
+	     "major modes\" like mumamo, mmm-mode or multi-mode.")
+      nil)))
+
+(defun php-cautious-indent-region (start end &optional quiet)
+  (if (or php-warned-bad-indent
+          (php-check-html-for-indentation))
+      (funcall 'c-indent-region start end quiet)))
+
+(defun php-cautious-indent-line ()
+  (if (or php-warned-bad-indent
+          (php-check-html-for-indentation))
+      (funcall 'c-indent-line)))
 
 ;;;###autoload
 (define-derived-mode php-mode c-mode "PHP"
   "Major mode for editing PHP code.\n\n\\{php-mode-map}"
 
-  (setq comment-start "// "
-	comment-end   ""
-	comment-start-skip "// *")
 
   (setq c-class-key php-class-key)
   (setq c-conditional-key php-conditional-key)
@@ -184,7 +230,7 @@ Turning this on will force PEAR rules on all PHP files."
   ;; The above causes XEmacs to handle shell-style comments correctly,
   ;; but fails to work in GNU Emacs which fails to interpret \n as the
   ;; end of the comment.
-  (if xemacsp (progn
+  (if (featurep 'xemacs) (progn
                 (modify-syntax-entry ?# "< b" php-mode-syntax-table)
                 (modify-syntax-entry ?\n "> b" php-mode-syntax-table)))
 
@@ -199,7 +245,15 @@ Turning this on will force PEAR rules on all PHP files."
           T                                 ; CASE-FOLD
           nil                               ; SYNTAX-ALIST
           nil                               ; SYNTAX-BEGIN
-          (font-lock-syntactic-keywords . php-font-lock-syntactic-keywords)))
+          ;;(font-lock-syntactic-keywords . php-font-lock-syntactic-keywords)
+          ))
+  (modify-syntax-entry ?# "< b" php-mode-syntax-table)
+
+  ;; Electric behaviour must be turned off, they do not work since
+  ;; they can not find the correct syntax in embedded PHP.
+  ;;
+  ;; Seems to work with narrowing so let it be on if the user prefers it.
+  ;;(setq c-electric-flag nil)
 
   (setq font-lock-maximum-decoration t
         case-fold-search t              ; PHP vars are case-sensitive
@@ -232,22 +286,12 @@ Turning this on will force PEAR rules on all PHP files."
                              (buffer-file-name))
                (string-match "\\.php$" (buffer-file-name))))
       (run-hooks 'php-mode-pear-hook))
-  
-  (run-hooks 'php-mode-user-hook))
 
-;; Make php-mode the default mode for PHP source code buffers.
-;;;###autoload
-(let ((php-file-patterns-temp php-file-patterns))
-  (while php-file-patterns-temp
-    (add-to-list 'auto-mode-alist
-		  (cons (car php-file-patterns-temp) 'php-mode))
-    (setq php-file-patterns-temp (cdr php-file-patterns-temp))))
+  (setq indent-line-function 'php-cautious-indent-line)
+  (setq indent-region-function 'php-cautious-indent-region)
+  (setq c-special-indent-hook nil)
 
-;; Handle Speedbar
-(if php-mode-speedbar-open
-    (speedbar 1))
-(if (and php-speedbar-config (symbolp 'speedbar))
-    (speedbar-add-supported-extension "\\.\\(inc\\|php[s34]?\\)"))
+  (run-hooks 'php-mode-hook))
 
 ;; Make a menu keymap (with a prompt string)
 ;; and make it the menu bar item's definition.
@@ -832,7 +876,7 @@ for \\[find-tag] (which see)."
 	  (1 font-lock-constant-face)))
 
    ;; treat 'print' as keyword only when not used like a function name
-   '("\\<print\\s-*(" . default)
+   '("\\<print\\s-*(" . php-default-face)
    '("\\<print\\>" . font-lock-keyword-face)
 
    ;; Fontify PHP tag
@@ -889,10 +933,19 @@ for \\[find-tag] (which see)."
    (list
 
     ;; <word> or </word> for HTML
-    '("</?\\sw+[^>]*>" . font-lock-constant-face)
+    ;;'("</?\\sw+[^> ]*>" . font-lock-constant-face)
+    ;;'("</?\\sw+[^>]*" . font-lock-constant-face)
+    ;;'("<!DOCTYPE" . font-lock-constant-face)
+    '("</?[a-z!:]+" . font-lock-constant-face)
+
+    ;; HTML >
+    '("<[^>]*\\(>\\)" (1 font-lock-constant-face))
+
+    ;; HTML tags
+    '("\\(<[a-z]+\\)[[:space:]]+\\([a-z:]+=\\)[^>]*?" (1 font-lock-constant-face) (2 font-lock-constant-face) )
+    '("\"[[:space:]]+\\([a-z:]+=\\)" (1 font-lock-constant-face))
 
     ;; HTML entities
-    '("&\\w+;" . font-lock-variable-name-face)
 
     ;; warn about '$' immediately after ->
     '("\\$\\(?:\\sw\\|\\s_\\)+->\\s-*\\(\\$\\)\\(\\(?:\\sw\\|\\s_\\)+\\)"
@@ -922,32 +975,14 @@ for \\[find-tag] (which see)."
     '("->\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face t t)) ; ->variable
     '("->\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" . (1 default t t)) ; ->function_call
     '("\\(?:\\sw\\|\\s_\\)+::\\(?:\\sw\\|\\s_\\)+\\s-*(" . default) ; class::method call
-    '("\\<\\(?:\\sw\\|\\s_\\)+\\s-*[[(]" . default)	; word( or word[
-    '("\\<[0-9]+" . default)		; number (also matches word)
+    ;;'("\\<\\(?:\\sw\\|\\s_\\)+\\s-*[[(]" . default)	; word( or word[
+    `("\\<[0-9]+" . php-default-face)		; number (also matches word)
 
     ;; Warn on any words not already fontified
     '("\\<\\(?:\\sw\\|\\s_\\)+\\>" . font-lock-warning-face)
     ))
   "Gauchy level highlighting for PHP mode.")
 
-(defconst php-font-lock-syntactic-keywords
-  (if xemacsp nil
-    ;; Mark shell-style comments.  font-lock handles this in a
-    ;; separate pass from normal syntactic scanning (somehow), so we
-    ;; get a chance to mark these in addition to C and C++ style
-    ;; comments.  This only works in GNU Emacs, not XEmacs 21 which
-    ;; seems to ignore this same code if we try to use it.
-    (list
-     ;; Mark _all_ # chars as being comment-start.  That will be
-     ;; ignored when inside a quoted string.
-     '("\\(\#\\)"
-       (1 (11 . nil)))
-     ;; Mark all newlines ending a line with # as being comment-end.
-     ;; This causes a problem, premature end-of-comment, when '#'
-     ;; appears inside a multiline C-style comment.  Oh well.
-     '("#.*\\([\n]\\)"
-       (1 (12 . nil)))
-     )))
 
 ;; Define the imenu-generic-expression for PHP mode.
 ;; To use, execute M-x imenu, then click on Functions or Classes,
@@ -982,14 +1017,13 @@ for \\[find-tag] (which see)."
 
 ;; Create "default" symbol for GNU Emacs so that both XEmacs and GNU
 ;; emacs can refer to the default face by a variable named "default".
-(unless (boundp 'default)
-  (defvar default 'default))
 
 ;; Create faces for XEmacs
-(unless (boundp 'font-lock-keyword-face)
-  (copy-face 'bold 'font-lock-keyword-face))
-(unless (boundp 'font-lock-constant-face)
-  (copy-face 'font-lock-keyword-face 'font-lock-constant-face))
+(when (featurep 'xemacs)
+  (unless (boundp 'font-lock-keyword-face)
+    (copy-face 'bold 'font-lock-keyword-face))
+  (unless (boundp 'font-lock-constant-face)
+    (copy-face 'font-lock-keyword-face 'font-lock-constant-face)))
 
 (provide 'php-mode)
 
