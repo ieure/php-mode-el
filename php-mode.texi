@@ -1,0 +1,362 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename php-mode.info
+@settitle PHP Mode Manual
+@set version 1.4.0
+@c %**end of header
+@copying
+This manual documents PHP mode version @value{version} for
+use with GNU Emacs.
+
+Copyright @copyright{} 2007  Aaron S. Hawley
+
+@quotation
+Permission is granted to copy, distribute and/or modify this
+document under the terms of the GNU Free Documentation
+License, Version 1.2 or any later version published by the
+Free Software Foundation; with no Invariant Sections, and no
+Cover Texts.  A copy of the license is included in the
+section entitled ``GNU Free Documentation License.''
+
+A copy of the license is also available from the Free
+Software Foundation Web site at
+@url{http://www.gnu.org/licenses/fdl.html}.
+
+@end quotation
+
+The document was typeset with
+@uref{http://www.texinfo.org/, GNU Texinfo}.
+
+@end copying
+
+@titlepage
+@title PHP Mode Manual
+@subtitle Editing PHP in GNU Emacs
+@author Aaron S. Hawley <aaronh@@localhost.localdomain>
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@c Output the table of the contents at the beginning.
+@contents
+
+@ifnottex
+@node Top
+@top PHP Mode Manual
+
+@insertcopying
+@end ifnottex
+
+@c Generate the nodes for this menu with `C-c C-u C-m'.
+@menu
+* Introduction::                
+* Electricity::                 
+* Motion::                      
+* Indentation::                 
+* Editing::                     
+* Completion::                  
+* PHP Comments::                
+* PHP Documentation::           
+* Customization::               
+* Embedded HTML::               
+* Contributors::                
+* Copying This Manual::         
+* Concept Index::               
+* Function Index::              
+* Keyboard Index::              
+@end menu
+
+@c Update all node entries with `C-c C-u C-n'.
+@c Insert new nodes with `C-c C-c n'.
+@node Introduction
+@chapter Introduction
+
+@cindex C mode
+@cindex features
+@cindex PEAR
+@cindex syntax highlighting
+@cindex version
+PHP mode is a major mode for editing PHP source code.  It's
+an extension of C mode; thus it inherits all C mode's
+navigation and editing functionality.  However, it colors
+the syntax according to the grammar of PHP versions 3, 4 and
+5 and indents according to the PHP PEAR coding guidelines.
+It also includes features for developing in PHP like
+documentation search of the PHP manual, code completion and
+a class browser.
+
+@findex php-mode-version
+To find out what version of PHP mode you have installed run
+@kbd{M-x php-mode-version}.
+
+@node Electricity
+@chapter Electricity
+
+@cindex electricity
+@findex self-insert-command
+Certain characters when inserted in Emacs have
+@dfn{electricity}.  Emacs recognizes them as ``electric''
+and automatically reacts in some way to their insertion as
+opposed to the @code{self-insert-command} -- the manner most
+characters are inserted into the buffer.
+
+For example, indent commands in programming language modes
+-- like PHP mode -- are electric.  Hitting @kbd{TAB} (or
+@kbd{C-i}) typically indents the line to the correct column
+based on the nesting of declaration blocks and conditional
+(control) syntaxes.  Other examples of electric characters
+include braces (@{ and @}), characters that are recognized
+as comments (#, / and *), and semicolons.  Inserting these
+``electric'' characters causes the line to be automatically
+be indented by
+
+@findex quoted-insert
+@kindex C-q
+@findex c-toggle-electric-state
+@kindex C-c C-l
+Should PHP mode do something you wish it doesn't, like
+indenting incorrectly when inserting a character, you've
+been @dfn{electricuted}.  To avoid this use
+@code{quoted-insert} by prefixing the character with
+@kbd{C-q}.  Alternatively, shut off the electric state with
+@kbd{C-c C-l}.
+
+@node Motion
+@chapter Motion
+
+@cindex motion
+@cindex movement
+@cindex point
+The traditional commands for Emacs@footnote{@pxref{Moving
+Point, Changing the Location of Point, Changing the Location
+of Point, Emacs}} and Emacs's C
+mode@footnote{@pxref{Movement Commands, Movement Commands,
+Movement Commands, ccmode}}: are supported in PHP mode with
+addition of the following extensions and notable mentions.
+
+@cindex universal argument
+@cindex numeric argument
+@findex universal-argument
+@kindex C-u
+Most movement commands support prefixing the command with
+the @dfn{univeral argument} using @kbd{C-u @var{N}} where
+@var{N} is the number of times to repeat a command or is
+four if @var{N} is not specified.  @xref{Arguments,
+Numeric Arguments, Numeric Arguments, Emacs}.
+
+@table @kbd
+@cindex block
+@cindex braces
+@cindex parentheses
+@cindex string
+@cindex statements
+@cindex syntax, forward
+@findex forward-sexp
+@kindex C-M-f
+@item C-M-f
+Move forward past the current syntax (@code{forward-sexp}).
+If point is in a string literal, move to the end of the
+string.  If point is at the beginning of a parenthetical
+expresion, move to the end of it.  If at the beginning of
+statement block surrounded by braces, move to the end of the
+block.  If point is at an identifier, skip to the next
+syntactic element.
+@cindex syntax, backward
+@findex backward-sexp
+@kindex C-M-b
+@item C-M-b
+Same as @kbd{C-M-f} except from the end of a syntax to its
+beginning (@code{backward-sexp}).
+@cindex beginning of function
+@cindex function, beginning of
+@findex c-beginning-of-defun
+@kindex C-M-a
+@item C-M-a
+Move point to the beginning of the top-level function
+definition (@code{c-beginning-of-defun}).
+@cindex end of function
+@cindex function, end of
+@findex c-end-of-defun
+@kindex C-M-e
+@item C-M-e
+Move point to the end of the top-level function definition
+(@code{c-end-of-defun}).
+@cindex end of function
+@cindex function, end of
+@findex beginning-of-defun
+@kindex C-M-<HOME>
+@item C-M-<HOME>
+Move point to the beginning of the current function
+(@code{beginning-of-defun}).
+@cindex end of function
+@cindex function, end of
+@findex end-of-defun
+@kindex C-M-<END>
+@item C-M-<END>
+Move point to the end of the current function
+(@code{end-of-defun}).
+@cindex bumpy case
+@cindex camel case
+@cindex mixed case
+@cindex case, mixed
+@cindex function, end of
+@findex backward-word
+@findex forward-word
+@findex c-subword-mode
+@kindex C-c C-w
+@item C-c C-w
+Enable word motion across mixed case identifiers with
+@code{forward-word} and @code{backward-word} commands.
+@end table
+
+@node Indentation
+@chapter Indentation
+
+@cindex indentation
+@cindex PEAR
+@cindex spaces
+@cindex tabs
+PHP mode's indentation settings follow the PHP PEAR ``Coding
+Standards''@footnote{@url{http://pear.php.net/manual/en/standards.php}}.
+Specifically, indentation commands use four spaces, and not
+tabs.
+
+@cindex HTML
+PHP does not appropriately indent HTML tags.  @xref{Embedded
+HTML}.
+
+To customize PHP mode's indentation rules, change the
+following variables.
+
+@table @code
+@item c-basic-offset
+This style variable of CC mode controls how many columns in
+the level of indentation.  By default this is 4 spaces in
+PHP mode (and in CC mode).
+@item tab-width
+This variable of Emacs determines how ``wide'' a tab
+in the buffer should be considered.  This is also
+traditionally described as setting the distance between
+``tab stops''.
+@item indent-tabs-mode
+Variable of Emacs that determines whether indentation
+commands should insert the tab character or insert the
+equivalent number of space characters.  In PHP mode, this is
+set to to nil by default.
+@end table
+
+@node Editing
+@chapter Editing
+
+Mark-defun
+
+@node Completion
+@chapter Completion
+
+@node PHP Comments
+@chapter PHP Comments
+
+@node PHP Documentation
+@chapter PHP Documentation
+
+@node Customization
+@chapter Customization
+
+@node Embedded HTML
+@appendix Embedded HTML
+
+@cindex markup formats
+@cindex HTML
+@cindex XML
+@cindex SGML
+@cindex embedded code
+@cindex indentation
+@findex HTML mode
+@findex php-mode
+@kindex M-x php-mode
+The PHP programming language is commonly embedded with HTML
+but also with other markup formats.  Unfortunately, PHP mode
+is not currently able to recognize these other bits and
+provide commands that behave appropriately.  Other modes for
+Emacs for properly indenting are available, including HTML
+mode, SGML mode and XML mode.
+
+For example, when editing the HTML sections found in a PHP
+file, consider turning on HTML mode with @kbd{M-x
+html-mode}, manipulating the markup with the mode-specific
+commands.  Turn back on PHP mode with @kbd{M-x php-mode}
+when you return to the PHP sections of the document.
+
+@cindex multiple major mode
+@cindex mumamo
+@cindex mmm-mode
+@cindex multi-mode
+Alternatively, consider investigating a @dfn{multiple major
+mode} like mumamo, mmm-mode or multi-mode.  These modes
+allow a single buffer to appoint d          ifferent major modes to
+respective portions of the buffer.
+
+@node Contributors
+@appendix Contributors
+
+@itemize
+@item Juanjo
+@item Torsten Martinsen
+@item Vinai Kopp
+@item Sean Champ
+@item Doug Marcey
+@item Kevin Blake
+@item Rex McMaster
+@item Mathias Meyer
+@item Boris Folgmann
+@item Roland Rosenfeld
+@item Fred Yankowski
+@item Craig Andrews
+@item John Keller
+@item Ryan Sammartino
+@item ppercot
+@item Valentin Funk
+@item Stig Bakken
+@item Gregory Stark
+@item Chris Morris
+@item Nils Rennebarth
+@item Gerrit Riessen
+@item Eric Mc Sween
+@item Ville Skytta
+@item Giacomo Tesio
+@item Lennart Borgman
+@item Stefan Monnier
+@item Aaron S. Hawley
+@end itemize
+
+@node Copying This Manual
+@appendix Copying This Manual
+
+@c Get fdl.texi from http://www.gnu.org/licenses/fdl.html
+@include fdl.texi
+
+@node Concept Index
+@unnumbered Concept Index
+
+@printindex cp
+
+@node Function Index
+@unnumbered Function Index
+
+@printindex fn
+
+@node Keyboard Index
+@unnumbered Keyboard Index
+
+@printindex ky
+
+@bye
+
+@c Local Variables: **
+@c mode: auto-fill **
+@c fill-column: 60 **
+@c compile-command: "makeinfo --html --output php-mode.html --no-split --no-headers php-mode.texi && texi2pdf php-mode.texi" **
+@c End: **
+
+@c php-mode.texi ends here
