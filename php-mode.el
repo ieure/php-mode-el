@@ -72,7 +72,7 @@
 
 ;; 1.4
 ;;   Updated GNU GPL to version 3.  Ported to Emacs 22 (CC mode
-;;   5.31). M-x php-mode-versoin shows version.  Provide end-of-defun
+;;   5.31). M-x php-mode-version shows version.  Provide end-of-defun
 ;;   beginning-of-defun functionality. Support add-log library.
 ;;   Fix __CLASS__ constant (Ian Eure).  Allow imenu to see visibility
 ;;   declarations -- "private", "public", "protected". (Bill Lovett)
@@ -114,12 +114,12 @@
 
 ;; Local variables
 (defgroup php nil
-  "Major mode for editing PHP code."
+  "Major mode `php-mode' for editing PHP code."
   :prefix "php-"
   :group 'languages)
 
 (defcustom php-default-face 'default
-  "Default face in php-mode buffers."
+  "Default face in `php-mode' buffers."
   :type 'face
   :group 'php)
 
@@ -135,8 +135,8 @@ Ignores php-file patterns option; fixed to expression \"\\.\\(inc\\|php[s34]?\\)
   :group 'php)
 
 (defcustom php-mode-speedbar-open nil
-  "Normally php-mode starts with the speedbar closed.\
-Turning this on will open it whenever php-mode is loaded."
+  "Normally `php-mode' starts with the speedbar closed.\
+Turning this on will open it whenever `php-mode' is loaded."
   :type 'boolean
   :set (lambda (sym val)
          (set-default sym val)
@@ -167,7 +167,7 @@ You can replace \"en\" with your ISO language code."
 
 ;;;###autoload
 (defcustom php-file-patterns '("\\.php[s34]?\\'" "\\.phtml\\'" "\\.inc\\'")
-  "List of file patterns for which to automatically invoke php-mode."
+  "List of file patterns for which to automatically invoke `php-mode'."
   :type '(repeat (regexp :tag "Pattern"))
   :set (lambda (sym val)
          (set-default sym val)
@@ -179,12 +179,12 @@ You can replace \"en\" with your ISO language code."
   :group 'php)
 
 (defcustom php-mode-hook nil
-  "List of functions to be executed on entry to php-mode"
+  "List of functions to be executed on entry to `php-mode'."
   :type 'hook
   :group 'php)
 
 (defcustom php-mode-pear-hook nil
-  "Hook called when a PHP PEAR file is opened with php-mode."
+  "Hook called when a PHP PEAR file is opened with `php-mode'."
   :type 'hook
   :group 'php)
 
