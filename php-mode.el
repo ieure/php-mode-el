@@ -276,7 +276,7 @@ See `php-beginning-of-defun'."
 (define-derived-mode php-mode c-mode "PHP"
   "Major mode for editing PHP code.\n\n\\{php-mode-map}"
 ;;   (c-add-language 'php-mode 'c-mode)
- 
+
 ;;   (c-lang-defconst c-block-stmt-1-kwds
 ;;     php php-block-stmt-1-kwds)
   (set (make-local-variable 'c-block-stmt-1-key) php-block-stmt-1-key)
@@ -315,7 +315,7 @@ See `php-beginning-of-defun'."
            ;; extreme/ugly for you.
            php-font-lock-keywords-3)
           nil                               ; KEYWORDS-ONLY
-          T                                 ; CASE-FOLD
+          t                                 ; CASE-FOLD
           nil                               ; SYNTAX-ALIST
           nil))                             ; SYNTAX-BEGIN
   (modify-syntax-entry ?# "< b" php-mode-syntax-table)
@@ -816,8 +816,8 @@ for \\[find-tag] (which see)."
 ;        "ORA_BIND_INOUT" "ORA_BIND_IN" "ORA_BIND_OUT"
 ;        "ORA_FETCHINTO_ASSOC" "ORA_FETCHINTO_NULLS"
 ;        "PREG_PATTERN_ORDER" "PREG_SET_ORDER" "PREG_SPLIT_NO_EMPTY"
-;        "PREG_SPLIT_DELIM_CAPTURE" 
-;        "PGSQL_ASSOC" "PGSQL_NUM" "PGSQL_BOTH" 
+;        "PREG_SPLIT_DELIM_CAPTURE"
+;        "PGSQL_ASSOC" "PGSQL_NUM" "PGSQL_BOTH"
 ;        "PRINTER_COPIES" "PRINTER_MODE" "PRINTER_TITLE"
 ;        "PRINTER_DEVICENAME" "PRINTER_DRIVERVERSION"
 ;        "PRINTER_RESOLUTION_Y" "PRINTER_RESOLUTION_X" "PRINTER_SCALE"
