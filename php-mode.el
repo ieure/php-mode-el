@@ -291,7 +291,6 @@ See `php-beginning-of-defun'."
 ;;   (c-lang-defconst c-class-decl-kwds
 ;;     php php-class-decl-kwds)
   (set (make-local-variable 'c-class-key) php-class-key)
-  (set (make-local-variable 'c-conditional-key) php-conditional-key)
 
   (defvar php-mode-syntax-table php-mode-syntax-table)
   ;; this line makes $ into punctuation instead of a word constituent
