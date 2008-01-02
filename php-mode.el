@@ -6,7 +6,7 @@
 ;; Author: Turadg Aleahmad, 1999-2004
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2007-12-26
+;; Modified: 2007-01-02
 ;; X-URL:   http://php-mode.sourceforge.net/
 
 (defconst php-mode-version-number "1.4.0-beta"
@@ -194,12 +194,13 @@ Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
-(defconst php-mode-modified
-  (save-excursion
-    (and
-     (re-search-backward "^;; Modified: \\(.*\\)" nil 'noerror)
-     (match-string-no-properties 1)))
-  "PHP Mode version number.")
+(eval-when-compile
+  (defconst php-mode-modified
+    (save-excursion
+      (and
+       (re-search-backward "^;; Modified: \\(.*\\)" nil 'noerror)
+       (match-string-no-properties 1)))
+    "PHP Mode version number."))
 
 (defun php-mode-version ()
   "Display string describing the version of PHP mode"
