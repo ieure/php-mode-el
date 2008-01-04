@@ -1,6 +1,7 @@
 ;;; php-mode.el --- major mode for editing PHP code
 
 ;; Copyright (C) 1999, 2000, 2001, 2003, 2004 Turadg Aleahmad
+;;               2008 Aaron S. Hawley
 
 ;; Maintainer: Aaron S. Hawley <ashawley at users.sourceforge.net>
 ;; Author: Turadg Aleahmad, 1999-2004
@@ -9,7 +10,7 @@
 ;; Modified: 2007-01-02
 ;; X-URL:   http://php-mode.sourceforge.net/
 
-(defconst php-mode-version-number "1.4.0-beta"
+(defconst php-mode-version-number "1.4.0"
   "PHP Mode version number.")
 
 ;;; License
@@ -79,8 +80,7 @@
 ;;
 ;; 1.3
 ;;   Changed the definition of # using a tip from Stefan
-;;   Monnier. This corrected highlighting and indentation. (Lennart
-;;   Borgman)
+;;   Monnier to correct highlighting and indentation. (Lennart Borgman)
 ;;   Changed the highlighting of the HTML part. (Lennart Borgman)
 ;;
 ;; 1.2
