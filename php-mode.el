@@ -1066,10 +1066,6 @@ for \\[find-tag] (which see)."
     ))
   "Gauchy level highlighting for PHP mode.")
 
-;; Define the imenu-generic-expression for PHP mode.
-;; To use, execute M-x imenu, then click on Functions or Classes,
-;; then select given function/class name to go to its definition.
-;; [Contributed by Gerrit Riessen]
 (defvar php-imenu-generic-expression
  '(
    ("All Functions"
