@@ -293,21 +293,6 @@ See `php-beginning-of-defun'."
 ;;     php php-class-decl-kwds)
   (set (make-local-variable 'c-class-key) php-class-key)
 
-  (defvar php-mode-syntax-table php-mode-syntax-table)
-  ;; this line makes $ into punctuation instead of a word constituent
-  ;; it used to be active, but it killed indenting of case lines that
-  ;; begin with '$' (many do).  If anyone has a solution to this
-  ;; problem, please let me know.  Of course, you're welcome to
-  ;; uncomment this line in your installation.
-;  (modify-syntax-entry ?$ "." php-mode-syntax-table)
-
-  ;; The above causes XEmacs to handle shell-style comments correctly,
-  ;; but fails to work in GNU Emacs which fails to interpret \n as the
-  ;; end of the comment.
-  (if (featurep 'xemacs) (progn
-                (modify-syntax-entry ?# "< b" php-mode-syntax-table)
-                (modify-syntax-entry ?\n "> b" php-mode-syntax-table)))
-
   (make-local-variable 'font-lock-defaults)
   (setq font-lock-defaults
         '((php-font-lock-keywords-1
@@ -319,7 +304,6 @@ See `php-beginning-of-defun'."
           t                                 ; CASE-FOLD
           nil                               ; SYNTAX-ALIST
           nil))                             ; SYNTAX-BEGIN
-  (modify-syntax-entry ?# "< b" php-mode-syntax-table)
 
   ;; Electric behaviour must be turned off, they do not work since
   ;; they can not find the correct syntax in embedded PHP.
