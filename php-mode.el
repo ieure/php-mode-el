@@ -7,10 +7,10 @@
 ;; Author: Turadg Aleahmad, 1999-2004
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2007-01-02
+;; Modified: 2008-01-02
 ;; X-URL:   http://php-mode.sourceforge.net/
 
-(defconst php-mode-version-number "1.4.0"
+(defconst php-mode-version-number "1.4.1-alpha"
   "PHP Mode version number.")
 
 ;;; License
