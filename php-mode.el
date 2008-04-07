@@ -209,7 +209,7 @@ Turning this on will force PEAR rules on all PHP files."
 	   php-mode-version-number php-mode-modified))
 
 (defconst php-beginning-of-defun-regexp
-  "^\\s *\\(\\(abstract\\|final\\|private\\|protected\\|public\\|static\\)*\\s +\\)function\\s +&?\\(\\(\\sw\\|\\s_\\)+\\)\\s *("
+  "^\\s *\\(\\(abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s +\\)*function\\s +&?\\(\\(\\sw\\|\\s_\\)+\\)\\s *("
   "Regular expression for a PHP function.")
 
 (defun php-beginning-of-defun (&optional arg)
