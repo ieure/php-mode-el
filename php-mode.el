@@ -506,7 +506,7 @@ for \\[find-tag] (which see)."
       (set-buffer buf)
       (goto-char (point-min))
       (when (re-search-forward
-             (format "function[ \t]+%s[ \t]*(\\([^{]*\\))" tagname)
+             (format "function\\s-+%s\\s-*(\\([^{]*\\))" tagname)
              nil t)
         (setq arglist (buffer-substring-no-properties
                        (match-beginning 1) (match-end 1)))))
@@ -948,10 +948,10 @@ for \\[find-tag] (which see)."
     'font-lock-keyword-face)
 
    ;; Fontify keywords and targets, and case default tags.
-   (list "\\<\\(break\\|case\\|continue\\)\\>[ \t]*\\(-?\\(?:\\sw\\|\\s_\\)+\\)?"
+   (list "\\<\\(break\\|case\\|continue\\)\\>\\s-*\\(-?\\(?:\\sw\\|\\s_\\)+\\)?"
 	 '(1 font-lock-keyword-face) '(2 font-lock-constant-face t t))
    ;; This must come after the one for keywords and targets.
-   '(":" ("^[ \t]*\\(\\(?:\\sw\\|\\s_\\)+\\)[ \t]*:[ \t]*$"
+   '(":" ("^\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*:\\s-*$"
 	  (beginning-of-line) (end-of-line)
 	  (1 font-lock-constant-face)))
 
@@ -976,7 +976,7 @@ for \\[find-tag] (which see)."
    (list
 
     ;; class declaration
-    '("[^_]\\<\\(class\\|interface\\)[ \t]*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
+    '("[^_]\\<\\(class\\|interface\\)\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
       (1 font-lock-keyword-face) (2 font-lock-type-face nil t))
     ;; handle several words specially, to include following word,
     ;; thereby excluding it from unknown-symbol checks later
@@ -998,11 +998,11 @@ for \\[find-tag] (which see)."
       (1 font-lock-keyword-face))
 
     ;; method features
-    '("^[ \t]*\\(abstract\\|static\\|final\\)\\s-+\\$?\\(?:\\sw\\|\\s_\\)+"
+    '("^\\s-*\\(abstract\\|static\\|final\\)\\s-+\\$?\\(?:\\sw\\|\\s_\\)+"
       (1 font-lock-keyword-face))
 
     ;; variable features
-    '("^[ \t]*\\(static\\|const\\)\\s-+\\$?\\(?:\\sw\\|\\s_\\)+"
+    '("^\\s-*\\(static\\|const\\)\\s-+\\$?\\(?:\\sw\\|\\s_\\)+"
       (1 font-lock-keyword-face))
     ))
   "Medium level highlighting for PHP mode.")
