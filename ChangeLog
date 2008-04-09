@@ -4,6 +4,8 @@
 	using format-time-string, but still using eval-when-compile.
 	(php-mode): Turn on necessary c-mode features with c-add-language,
 	like c-symbol-key.
+	(php-mode): Add commented-out c-lang-defvar statements below
+	commented-out c-lang-defconst.
 
 2008-04-07  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 

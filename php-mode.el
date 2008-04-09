@@ -275,13 +275,14 @@ See `php-beginning-of-defun'."
   "Major mode for editing PHP code.\n\n\\{php-mode-map}"
   (c-add-language 'php-mode 'c-mode)
 
-;;   (c-lang-defconst c-block-stmt-1-kwds
-;;     php php-block-stmt-1-kwds)
+;;   (c-lang-defconst c-block-stmt-1-kwds php php-block-stmt-1-kwds)
+;;   (c-lang-defvar c-block-stmt-1-kwds (c-lang-const c-block-stmt-1-kwds))
   (set (make-local-variable 'c-block-stmt-1-key) php-block-stmt-1-key)
 
-;;   (c-lang-defconst c-block-stmt-2-kwds
-;;     php php-block-stmt-2-kwds)
+;;   (c-lang-defconst c-block-stmt-2-kwds php php-block-stmt-2-kwds)
+;;   (c-lang-defvar c-block-stmt-2-kwds (c-lang-const c-block-stmt-2-kwds))
   (set (make-local-variable 'c-block-stmt-2-key) php-block-stmt-2-key)
+
   ;; Specify that cc-mode recognize Javadoc comment style
   (set (make-local-variable 'c-doc-comment-style)
     '((php-mode . javadoc)))
