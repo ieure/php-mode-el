@@ -273,7 +273,7 @@ See `php-beginning-of-defun'."
 ;;;###autoload
 (define-derived-mode php-mode c-mode "PHP"
   "Major mode for editing PHP code.\n\n\\{php-mode-map}"
-;;   (c-add-language 'php-mode 'c-mode)
+  (c-add-language 'php-mode 'c-mode)
 
 ;;   (c-lang-defconst c-block-stmt-1-kwds
 ;;     php php-block-stmt-1-kwds)
