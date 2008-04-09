@@ -6,6 +6,11 @@
 	like c-symbol-key.
 	(php-mode): Add commented-out c-lang-defvar statements below
 	commented-out c-lang-defconst.
+	(php-mode): Overwrite C-style macros rule to recognize PHP tags
+	instead.
+	(php-tags, php-tags-key): New constants.
+	(php-font-lock-keywords-1): Use php-tags-key for syntax
+	highlighting of PHP tags.
 
 2008-04-07  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 

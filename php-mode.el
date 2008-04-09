@@ -275,6 +275,17 @@ See `php-beginning-of-defun'."
   "Major mode for editing PHP code.\n\n\\{php-mode-map}"
   (c-add-language 'php-mode 'c-mode)
 
+;; PHP doesn't have C-style macros.
+;; HACK: Overwrite this syntax with rules to match <?php and others.
+;;   (c-lang-defconst c-opt-cpp-start php php-tags-key)
+;;   (c-lang-defvar c-opt-cpp-start (c-lang-const c-opt-cpp-start))
+  (set (make-local-variable 'c-opt-cpp-start) php-tags-key)
+;;   (c-lang-defconst c-opt-cpp-start php php-tags-key)
+;;   (c-lang-defvar c-opt-cpp-start (c-lang-const c-opt-cpp-start))
+  (set (make-local-variable 'c-opt-cpp-prefix) php-tags-key)
+
+  (c-set-offset 'cpp-macro 0)
+  
 ;;   (c-lang-defconst c-block-stmt-1-kwds php php-block-stmt-1-kwds)
 ;;   (c-lang-defvar c-block-stmt-1-kwds (c-lang-const c-block-stmt-1-kwds))
   (set (make-local-variable 'c-block-stmt-1-key) php-block-stmt-1-key)
@@ -528,6 +539,9 @@ for \\[find-tag] (which see)."
   '[(control .)]
   'php-show-arglist)
 
+(defconst php-tags '("<?php" "?>" "<?" "<?="))
+(defconst php-tags-key (regexp-opt php-tags))
+
 (defconst php-constants
   (eval-when-compile
     (regexp-opt
@@ -942,8 +956,7 @@ for \\[find-tag] (which see)."
    '("\\<print\\>" . font-lock-keyword-face)
 
    ;; Fontify PHP tag
-   '("<\\?\\(php\\)?" . font-lock-constant-face)
-   '("\\?>" . font-lock-constant-face)
+   (cons php-tags-key font-lock-constant-face)
 
    ;; Fontify ASP-style tag
    '("<\\%\\(=\\)?" . font-lock-constant-face)
