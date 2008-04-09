@@ -196,11 +196,8 @@ Turning this on will force PEAR rules on all PHP files."
 
 (eval-when-compile
   (defconst php-mode-modified
-    (save-excursion
-      (and
-       (re-search-backward "^;; Modified: \\(.*\\)" nil 'noerror)
-       (match-string-no-properties 1)))
-    "PHP Mode version number."))
+    (format-time-string "%Y-%m-%d")
+    "PHP Mode build date."))
 
 (defun php-mode-version ()
   "Display string describing the version of PHP mode"
