@@ -138,6 +138,13 @@ updates and improvements -- the first in over 2 years.
 @node Electricity
 @chapter Electricity
 
+@c This article explains electricity, because the Emacs
+@c manual, as of 2008, doesn't do a good job of introducing
+@c the concept.
+
+@c The section only gives examples of ``electric''
+@c commands.  There should be a list of those commands.
+
 @cindex electricity
 @findex self-insert-command
 Certain characters when inserted in Emacs have
@@ -184,6 +191,11 @@ the electric effect again.
 @node Motion
 @chapter Motion
 
+@c It's important to explain when a feature is really a
+@c subset of a feature of Emacs or C Mode, and take the
+@c opportunity to create a cross-reference to those free
+@c manuals.
+
 @cindex motion
 @cindex movement
 @cindex point
@@ -195,6 +207,15 @@ Movement Commands, ccmode, CC Mode Manual}.} are supported in
 PHP mode.  The following commands are notable to mention for
 working with PHP or are extensions expressly provided PHP
 mode.
+
+@c The forward-sexp command isn't optimally named nor
+@c behaved for a language like PHP, but it comes for free
+@c (gratis) from Emacs, and may prove useful.  It would be
+@c better to have a php-forward-syntax command that follows
+@c the parsing rules of PHP and not a lisp language.  FOr
+@c intance, if at the beginning or end of a statement, move
+@c to the next statement.  The syntaxes that would be useful
+@c to move accross would need to be researched.
 
 @table @kbd
 
@@ -283,6 +304,11 @@ Arguments, emacs, GNU Emacs Manual}.
 @node Indentation
 @chapter Indentation
 
+@c It's important to explain when a feature is really a
+@c subset of a feature of Emacs or C Mode, and take the
+@c opportunity to create a cross-reference to those free
+@c manuals.
+
 @cindex indentation
 @cindex PEAR
 @cindex spaces
@@ -298,6 +324,15 @@ HTML}.
 
 To customize PHP mode's indentation rules, change the
 following variables.
+
+@c There are probably other variables that are safe for
+@c users to change and are worth mentioning.  One's from C
+@c mode come to mind, like indentation-style.  Some day it
+@c would also be useful to support a variety of PHP
+@c programming styles.
+
+@c Perhaps the indentation commands should be featured
+@c before customization.  They could have separate sections.
 
 @table @code
 
@@ -368,8 +403,13 @@ Properly indent each line of current top-level function or
 top-level class (@code{c-indent-defun}).
 @end table
 
+@c This narrowing stuff could deserve its own
+@c chapter/section.
+
 @node Editing
 @chapter Editing
+
+@c Consider writing an introduction to this section.
 
 @table @kbd
 
@@ -440,6 +480,15 @@ customize-variable RET php-manual-path RET}, or by setting
 the value in your Emacs initialization file
 (@file{~/.emacs}).  The PHP function names
 
+@c FIXME: Explain how the function name completion works, as
+@c much as the user would need to know.
+
+@c The following explains how to get completion to work in
+@c detail, with any expectation that the reader knows how
+@c completion works in Emacs.  The more opportunities to
+@c share features that come with Emacs as they apply to PHP
+@c development, the better.
+
 @cindex etags
 @cindex tag file
 @cindex Makefile
@@ -461,6 +510,11 @@ Run,
 @example
 etags @var{file}
 @end example
+
+@c Keep the following notes on third-party packages updated
+@c with respect to managing Emacs settings on a per-project
+@c basis.  Otherwise, delete the paragraph(s).  Perhaps the
+@c Emacs project will choose or develop a solution, soon.
 
 to create a tags file for @var{file}.
 
@@ -560,6 +614,13 @@ Mode Manual}.}: are supported in PHP mode.  The following
 commands are notable to mention for working with PHP and are
 expressly provided for PHP mode.
 
+@c These commands aren't provided by PHP mode, but are
+@c important to mention sine the PHP language has comments!
+@c It should probably discuss the various types of comments.
+
+@c A section should explain the phpdoc format as supported
+@c by PHP.
+
 @table @kbd
 
 @cindex comment, insert
@@ -654,6 +715,11 @@ Search PHP manual using identifier at point.
 @node Index Menu
 @chapter Index Menu
 
+@c Imenu is documented, because PHP explicitly supports it by
+@c setting imenu-generic-expression to
+@c php-imenu-generic-expression.  Imenu is documented well,
+@c but 
+
 @cindex index menu
 @cindex menu, index
 @cindex index, class
@@ -665,6 +731,8 @@ defined in the current buffer.  The menu is pretty simple,
 but is helpful when navigating large files.  The contents of
 the menu also provide a good overview to the user about the
 file's contents.
+
+@c Initially contributed by Gerrit Riessen
 
 To enable this menu, run the following command.
 
@@ -713,6 +781,13 @@ Emacs initialization file (@file{~/.emacs}).
 
 @node Change Logs
 @chapter Change Logs
+
+@c This is documented, because PHP mode explicitly supports
+@c the features off add-log by setting the value for the
+@c add-log-current-defun-header-regexp to
+@c php-beginning-of-defun-regexp.  This feature is
+@c documented in the PHP manual, but it is worth advertising
+@c to PHP programmers.
 
 PHP mode can help generate @file{ChangeLog} files, a
 widely-adopted format for documenting the changes made to
@@ -765,6 +840,10 @@ settings for PHP mode.
 
 @node Embedded HTML
 @appendix Embedded HTML
+
+@c Someday, there will be a decisive way to work on PHP and
+@c HTML markup together.  For now, it's not decided.  This
+@c section offers some workarounds and offers some suggestions.
 
 @cindex markup formats
 @cindex XML

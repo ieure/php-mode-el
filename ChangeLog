@@ -1,5 +1,8 @@
 2008-04-12  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
+	* php-mode.texi: Insert various comments for maintaining the
+	manual.
+
 	* php-mode.el: Update modification date to today's date.
 	(php-tags, php-tags-key): Move definition to above php-mode to
 	avoid byte compiler warning.  Use eval-when-compile for
