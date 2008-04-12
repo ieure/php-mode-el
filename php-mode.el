@@ -194,10 +194,8 @@ Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
-(eval-when-compile
-  (defconst php-mode-modified
-    (format-time-string "%Y-%m-%d")
-    "PHP Mode build date."))
+(defconst php-mode-modified "2008-01-02"
+  "PHP Mode build date.")
 
 (defun php-mode-version ()
   "Display string describing the version of PHP mode"
