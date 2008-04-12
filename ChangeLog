@@ -1,4 +1,4 @@
-2008-04-12  Aaron Hawley  <aaronh@localhost.localdomain>
+2008-04-12  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* php-mode.el (php-tags, php-tags-key): Move definition to above
 	php-mode to avoid byte compiler warning.  Use eval-when-compile
@@ -7,6 +7,11 @@
 	PHP and ASP tags.
 	(php-mode-modified): Use a string literal rather than a computed
 	value.
+	(php-font-lock-keywords-1, php-font-lock-keywords-2): Add [^_$] to
+	beginning and [^_] to end of font-lock regular expressions to
+	avoid false matches in user variable and function names.  Affects
+	highlighting of self, parent, print, break, case, continue, other
+	keywords and internal constants.
 
 2008-04-09  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 

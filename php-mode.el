@@ -933,16 +933,16 @@ for \\[find-tag] (which see)."
   (list
    ;; Fontify constants
    (cons
-    (concat "\\<\\(" php-constants "\\)\\>")
+    (concat "[^_$]\\<\\(" php-constants "\\)\\>[^_]")
     'font-lock-constant-face)
 
    ;; Fontify keywords
    (cons
-    (concat "\\<\\(" php-keywords "\\)\\>")
+    (concat "[^_$]\\<\\(" php-keywords "\\)\\>[^_]")
     'font-lock-keyword-face)
 
    ;; Fontify keywords and targets, and case default tags.
-   (list "\\<\\(break\\|case\\|continue\\)\\>\\s-*\\(-?\\(?:\\sw\\|\\s_\\)+\\)?"
+   (list "[^_$]\\<\\(break\\|case\\|continue\\)\\>\\s-*\\(-?\\(?:\\sw\\|\\s_\\)+\\)?"
 	 '(1 font-lock-keyword-face) '(2 font-lock-constant-face t t))
    ;; This must come after the one for keywords and targets.
    '(":" ("^\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*:\\s-*$"
@@ -951,7 +951,7 @@ for \\[find-tag] (which see)."
 
    ;; treat 'print' as keyword only when not used like a function name
    '("\\<print\\s-*(" . php-default-face)
-   '("\\<print\\>" . font-lock-keyword-face)
+   '("[^_$]\\<\\(print\\)\\>[^_]" (1 font-lock-keyword-face))
 
    ;; Fontify PHP tag
    (cons php-tags-key font-lock-preprocessor-face)
@@ -984,7 +984,7 @@ for \\[find-tag] (which see)."
       (2 font-lock-function-name-face nil t))
 
     ;; class hierarchy
-    '("\\(self\\|parent\\)\\W" (1 font-lock-constant-face nil nil))
+    '("[^_$]\\<\\(self\\|parent\\)\\>[^_]" (1 font-lock-constant-face nil nil))
 
     ;; method and variable features
     '("\\<\\(private\\|protected\\|public\\)\\s-+\\$?\\(?:\\sw\\|\\s_\\)+"
