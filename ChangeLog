@@ -1,8 +1,9 @@
 2008-04-12  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
-	* php-mode.el (php-tags, php-tags-key): Move definition to above
-	php-mode to avoid byte compiler warning.  Use eval-when-compile
-	for regexp-opt.
+	* php-mode.el: Update modification date to today's date.
+	(php-tags, php-tags-key): Move definition to above php-mode to
+	avoid byte compiler warning.  Use eval-when-compile for
+	regexp-opt.
 	(php-font-lock-keywords-1): Use font-lock-preprocessor-face for
 	PHP and ASP tags.
 	(php-mode-modified): Use a string literal rather than a computed

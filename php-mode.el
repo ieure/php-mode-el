@@ -7,7 +7,7 @@
 ;; Author: Turadg Aleahmad, 1999-2004
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2008-01-02
+;; Modified: 2008-04-12
 ;; X-URL:   http://php-mode.sourceforge.net/
 
 (defconst php-mode-version-number "1.4.1-alpha"
@@ -194,7 +194,7 @@ Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
-(defconst php-mode-modified "2008-01-02"
+(defconst php-mode-modified "2008-04-12"
   "PHP Mode build date.")
 
 (defun php-mode-version ()
