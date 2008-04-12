@@ -270,6 +270,9 @@ See `php-beginning-of-defun'."
           (php-check-html-for-indentation))
       (funcall 'c-indent-line)))
 
+(defconst php-tags '("<?php" "?>" "<?" "<?="))
+(defconst php-tags-key (eval-when-compile (regexp-opt php-tags))
+
 ;;;###autoload
 (define-derived-mode php-mode c-mode "PHP"
   "Major mode for editing PHP code.\n\n\\{php-mode-map}"
@@ -539,9 +542,6 @@ for \\[find-tag] (which see)."
   '[(control .)]
   'php-show-arglist)
 
-(defconst php-tags '("<?php" "?>" "<?" "<?="))
-(defconst php-tags-key (regexp-opt php-tags))
-
 (defconst php-constants
   (eval-when-compile
     (regexp-opt
@@ -956,11 +956,11 @@ for \\[find-tag] (which see)."
    '("\\<print\\>" . font-lock-keyword-face)
 
    ;; Fontify PHP tag
-   (cons php-tags-key font-lock-constant-face)
+   (cons php-tags-key font-lock-preprocessor-face)
 
    ;; Fontify ASP-style tag
-   '("<\\%\\(=\\)?" . font-lock-constant-face)
-   '("\\%>" . font-lock-constant-face)
+   '("<\\%\\(=\\)?" . font-lock-preprocessor-face)
+   '("\\%>" . font-lock-preprocessor-face)
 
    )
   "Subdued level highlighting for PHP mode.")

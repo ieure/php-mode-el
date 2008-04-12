@@ -1,11 +1,19 @@
+2008-04-12  Aaron Hawley  <aaronh@localhost.localdomain>
+
+	* php-mode.el (php-tags, php-tags-key): Move definition to above
+	php-mode to avoid byte compiler warning.  Use eval-when-compile
+	for regexp-opt.
+	(php-font-lock-keywords-1): Use font-lock-preprocessor-face for
+	PHP and ASP tags.
+
 2008-04-09  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
-	* php-mode.el (php-mode-modified): Resolve setting constant by
-	using format-time-string, but still using eval-when-compile.
-	(php-mode): Turn on necessary c-mode features with c-add-language,
-	like c-symbol-key.
-	(php-mode): Add commented-out c-lang-defvar statements below
-	commented-out c-lang-defconst.
+	* php-mode.el (php-mode): Add commented-out c-lang-defvar
+	statements below commented-out out c-lang-defconst.
+	(php-mode-modified): Resolve setting constant by using
+	format-time-string, but still using eval-when-compile.
+	(php-mode): Turn on c-mode features with c-add-language, including
+	c-symbol-key.
 	(php-mode): Overwrite C-style macros rule to recognize PHP tags
 	instead.
 	(php-tags, php-tags-key): New constants.
