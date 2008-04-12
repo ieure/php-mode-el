@@ -269,7 +269,7 @@ See `php-beginning-of-defun'."
       (funcall 'c-indent-line)))
 
 (defconst php-tags '("<?php" "?>" "<?" "<?="))
-(defconst php-tags-key (eval-when-compile (regexp-opt php-tags))
+(defconst php-tags-key (eval-when-compile (regexp-opt php-tags)))
 
 ;;;###autoload
 (define-derived-mode php-mode c-mode "PHP"
