@@ -135,6 +135,13 @@ updates and improvements -- the first in over 2 years.
 @c released in 2007.  PHP mode shipped with a 16 page
 @c Texinfo manual authored by Hawley.
 
+This manual describes PHP mode for practiced Emacs users
+especially those who have read or can refer to the Emacs
+manual.  The reader should already know how to program in
+PHP, although one could easily learn how to program PHP
+using PHP mode and Emacs.  There are no explanations of PHP
+programming in this manual.
+
 @node Electricity
 @chapter Electricity
 
@@ -151,8 +158,8 @@ Certain characters when inserted in Emacs have
 @dfn{electricity}.  Emacs recognizes them as ``electric''
 and automatically reacts in some way to their insertion.
 This is unlike the @code{self-insert-command} -- the
-conventional manner most characters are inserted into the
-buffer with no side-effect.
+conventional manner Emacs inserts most characters into the
+buffer and without side-effect.
 
 @cindex indentation, electric
 @cindex electric indentation
@@ -167,7 +174,7 @@ modes -- including PHP mode -- are electric.  Hitting
 correct column based on the nested declaration blocks or
 conditional (control) syntax statements.  Other examples of
 electric characters include braces (@{ and @}), characters
-that are recognized as comments (#, / and *), and
+related to comments (#, / and *), and
 semicolons.  Inserting ``electric'' characters causes the
 line to be automatically be indented appropriately by PHP
 mode.
@@ -199,13 +206,13 @@ the electric effect again.
 @cindex motion
 @cindex movement
 @cindex point
-The traditional commands for Emacs@footnote{@xref{Moving
+The traditional point movement commands for Emacs@footnote{@xref{Moving
 Point, Changing the Location of Point, Changing the Location
 of Point, emacs, GNU Emacs Manual}.} and Emacs's C
 mode@footnote{@xref{Movement Commands, Movement Commands,
-Movement Commands, ccmode, CC Mode Manual}.} are supported in
-PHP mode.  The following commands are notable to mention for
-working with PHP or are extensions expressly provided PHP
+Movement Commands, ccmode, CC Mode Manual}.} are supported by
+PHP mode.  The following are noteworthy commands for
+working on PHP code or are extensions expressly provided by PHP
 mode.
 
 @c The forward-sexp command isn't optimally named nor
@@ -353,7 +360,7 @@ set to to nil by default.
 This variable of Emacs determines how ``wide'' a tab in the
 buffer should be considered.  This is also traditionally
 described as setting the distance between ``tab stops''.  By
-default, tabs are not inserted by PHP mode.
+default, PHP mode does not insert tabs for indentation.
 
 @end table
 
@@ -362,7 +369,7 @@ Emacs@footnote{@xref{Indentation Commands, Indentation
 Commands, Indentation Commands, emacs, GNU Emacs Manual}.}
 and Emacs's C mode@footnote{@xref{Indentation Commands,
 Indentation Commands, Indentation Commands, ccmode, CC Mode
-Manual}.}: are supported in PHP mode, following the
+Manual}.}: are supported by PHP mode, following the
 indentation rules of PHP.
 
 @table @kbd
@@ -402,9 +409,6 @@ Properly indent each line of region (@code{indent-region}).
 Properly indent each line of current top-level function or
 top-level class (@code{c-indent-defun}).
 @end table
-
-@c This narrowing stuff could deserve its own
-@c chapter/section.
 
 @node Editing
 @chapter Editing
@@ -452,17 +456,62 @@ the mark at the end and of the function and the point at the
 beginning.  Useful if you want to kill the region with
 @kbd{C-w} or @kbd{M-w}, or indent the region with
 @kbd{C-M-\} or @kbd{C-x TAB} (@xref{Indentation}.).
+@cindex defun, mark
+@findex mark-defun
+@kindex M-x mark-defun
+@item M-x mark-defun
+Like @kbd{C-M-h} (@code{c-mark-function}), except place the mark
+at the end of the function even if it's not at the
+top-level.  With functions that are methods defined in a
+class, they may be indented and not top-level functions,
+however this command will only mark the current function.
+@c Perhaps, M-x mark-defun should be the default for running
+@c C-M-h again.  This is the downside of inheriting C mode's
+@c keybindings.
 
+@end table
+
+@c This narrowing stuff could deserve its own
+@c chapter/section.
+
+@cindex narrowing
+@cindex widening
+The traditional commands for narrowing to a region in
+Emacs@footnote{@xref{Narrowing, Narrowing, Narrowing, emacs,
+GNU Emacs Manual}.} are supported in PHP mode.  The
+following commands are notable to mention for working with
+PHP or are extensions expressly provided PHP mode.
+
+@table @kbd
+
+@cindex function narrowing
+@cindex function, narrow
+@findex narrow-to-defun
+@kindex C-x n d
+@item C-x n d
+Narrow the buffer to the contents of the current function
+(@code{narrow-to-defun}).  This will narrow to the function
+as identified to the current function, even if it is
+nestedin an object or another function.  The logic to narrow
+the function is the same as the @code{beginning-of-defun}
+and @code{end-of-defun} commands -- see @ref{Motion}, and
+the @code{mark-defun} command -- see above.
+@cindex widening
+@findex widen
+@kindex C-x n w
+@item C-x n w
+Undo any narrowing by widening the buffer again by making
+the rest of the buffer available (@code{widen}).
 @end table
 
 @node Completion
 @chapter Completion
 
 @cindex completion
-Completing function names, identifiers and keywords in PHP
+Completing function names, identifiers and PHP keywords
 is possible in PHP mode.  In PHP mode, it is possible to
-complete identifiers defined by PHP programming language,
-and functions defined by you.
+complete identifiers defined by the PHP programming language,
+and to complete functions defined by you.
 
 @cindex customization, PHP manual path
 @cindex PHP manual path
@@ -478,7 +527,7 @@ Unpack the files to a directory, and define the variable
 Configure this setting with either @kbd{M-x
 customize-variable RET php-manual-path RET}, or by setting
 the value in your Emacs initialization file
-(@file{~/.emacs}).  The PHP function names
+(@file{~/.emacs}).
 
 @c FIXME: Explain how the function name completion works, as
 @c much as the user would need to know.
@@ -511,14 +560,9 @@ Run,
 etags @var{file}
 @end example
 
-@c Keep the following notes on third-party packages updated
-@c with respect to managing Emacs settings on a per-project
-@c basis.  Otherwise, delete the paragraph(s).  Perhaps the
-@c Emacs project will choose or develop a solution, soon.
+to create a @file{TAGS} file for @var{file}.
 
-to create a tags file for @var{file}.
-
-To generate a tag file for all the PHP files in the current
+To generate a @file{TAGS} file for all the PHP files in the current
 directory, run
 
 @example
@@ -547,30 +591,34 @@ modes other than PHP mode.
 @vindex php-completion-file
 @cindex .emacs, php-completion-file
 @findex customize-variable
-To avoid either 
+If you are interested in any one or more of the following
+consider using the variable @code{php-completion-file}.
 
 @enumerate
 @item
 avoid regenerating the completion table from the PHP manual
 every Emacs session,
 @item
-to generate a completion file from a facility external to
+generating a completion file from a facility external to
 Emacs tags,
 @item
-or to provide more granular control over the completion
+or provide more granular control over the completion
 rules for files;
 
 @end enumerate
 
-consider using the variable @code{php-completion-file}.
-
-Configure this setting with either @kbd{M-x
+Configure the variable with either @kbd{M-x
 customize-variable RET php-completion-file RET}, or by
 setting the value in your Emacs initialization file
 (@file{~/.emacs}).
 
-For larger projects or because of other specific needs,
-conventional ways of setting these and other variables may
+@c Keep the following notes on third-party packages updated
+@c with respect to managing Emacs settings on a per-project
+@c basis.  Otherwise, delete the paragraph(s).  Perhaps the
+@c Emacs project will choose or develop a solution, soon.
+
+In larger projects or with other specific needs,
+conventional methods of setting these and other variables may
 be inadequate.  As of 2008, third-party packages do exist
 for Emacs to configure Emacs settings on groups of files or
 for directory trees, including @file{dirvars.el}.
@@ -606,12 +654,12 @@ minibuffer.
 
 @cindex comment
 The usual commands for inserting, managing and editing
-source code comments in Emacs Emacs@footnote{@xref{Comments,
+source code comments in Emacs@footnote{@xref{Comments,
 Manipulating Comments,Manipulating Comments, emacs, GNU
 Emacs Manual}.}  and Emacs's C mode@footnote{@xref{Comment
 Commands, Comment Commands, Comment Commands, ccmode, CC
 Mode Manual}.}: are supported in PHP mode.  The following
-commands are notable to mention for working with PHP and are
+noteworthy commands are useful for working with PHP or are
 expressly provided for PHP mode.
 
 @c These commands aren't provided by PHP mode, but are
@@ -640,7 +688,7 @@ already exist, indent comment (@code{comment-indent}).
 @kindex M-j
 @item M-j
 Insert a newline in a comment on the next line with the
-comment starting at the same place as the current line
+comment starting at the same column as the current line
 (@code{c-indent-new-comment-line}).
 @cindex column, comment
 @cindex comment column
@@ -690,10 +738,12 @@ Surround region with comment characters.
 @findex browse-url
 @findex customize-group
 PHP mode supports the online documentation available from
-@uref{http://www.php.net/}.  These commands are handled by
-@code{browse-url}.  Run the Emacs command @kbd{M-x
+@uref{http://www.php.net/}.  The @code{browse-url} system of Emacs
+supports these commands.  Run the Emacs command @kbd{M-x
 customize-group RET browse-url RET} to configure how
-@code{browse-url} behaves.
+@code{browse-url} behaves.  For example, you may want to
+change the Web browser Emacs uses for visiting a page of the
+manual for PHP.
 
 @table @kbd
 
@@ -746,7 +796,7 @@ a menu item called ``Index'' to the menu bar.
 
 @end table
 
-In the menu are any one or more of the following menu items.
+In the menu will be any one or more of the following menu items.
 
 @table @samp
 
@@ -791,10 +841,10 @@ Emacs initialization file (@file{~/.emacs}).
 
 PHP mode can help generate @file{ChangeLog} files, a
 widely-adopted format for documenting the changes made to
-source code, especially software.  PHP mode and Emacs will
+source code--especially software.  PHP mode and Emacs will
 determine the current function, file name, author
 information and date and use it all to prepare a properly
-formatted entry for the file.
+formatted @file{ChangeLog} entry.
 
 The @code{add-change-log-entry} commands can be run from
 within a buffer containing a PHP buffer, or from a buffer in
@@ -805,11 +855,15 @@ Manual}.
 @table @kbd
 
 @item C-x 4 a
-Add an entry in a ChangeLog file opened in another window,
+Add an entry in a @file{ChangeLog} file opened in another window,
 or add a new line to the already begun entry
 (@code{add-change-log-entry-other-window}).  Provides the
 file name and the respective function name, when applicable,
-for the current point
+for the current point.  The point can be in a PHP source
+file, or in the hunk of a diff file.@footnote{@xref{Diff
+Mode, Diff Mode, Diff Mode, emacs, GNU Emacs Manual}}
+This command will also add the current author and date to
+the entry.
 
 @end table
 
@@ -825,7 +879,7 @@ FIXME: Document speedbar support for PHP mode.
 @cindex .emacs
 @cindex initialization file
 Customization for PHP mode can be done using Emacs's
-Customize feature@footnote{@xref{Customization,
+``Customize'' feature@footnote{@xref{Customization,
 Customization, Customization, emacs, GNU Emacs Manual}.}, or
 by adding bits of Emacs Lisp to your Emacs initialization
 file (@file{~/.emacs}).
@@ -856,8 +910,8 @@ settings for PHP mode.
 The PHP programming language is commonly embedded with HTML
 but also with other markup formats.  Unfortunately, PHP mode
 is currently unable to recognize these other bits and
-provide commands that behave appropriately.  Other modes for
-Emacs for properly indenting are available, including HTML
+provide commands that behave appropriately.  Other Emacs modes
+for properly indenting HTML include HTML
 mode, SGML mode and XML mode.
 
 @findex html-mode
@@ -909,6 +963,7 @@ portions of the buffer.
 @item Lennart Borgman
 @item Stefan Monnier
 @item Aaron S. Hawley
+@item Aaron Iba
 @end itemize
 
 @node Copying This Manual

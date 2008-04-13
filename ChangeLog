@@ -1,7 +1,10 @@
 2008-04-12  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* php-mode.texi: Insert various comments for maintaining the
-	manual.
+	manual.  Make grammatical throughout document.
+	(Introduction): Add description of intended audience.
+	(Editing): Document mark-defun, narrow-to-defun and widen.
+	(Contributors): Add Aaron Iba.
 
 	* php-mode.el: Update modification date to today's date.
 	(php-tags, php-tags-key): Move definition to above php-mode to
