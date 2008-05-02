@@ -612,6 +612,23 @@ customize-variable RET php-completion-file RET}, or by
 setting the value in your Emacs initialization file
 (@file{~/.emacs}).
 
+To create a file that can be set for
+@code{php-completion-file}, create with the following shell
+commands with the HTML version of the PHP manual installed
+at @file{/usr/share/doc/php-manual/en/html}.
+
+@example
+$ cd /usr/share/doc/php-manual/en/html
+$ ls -1 function*.html \
+  | sed -e 's/^function\.\([-a-zA-Z_0-9]*\)\.html/\1/' \
+  | tr - _ \
+  > ~/.emacs.d/php/php-completion-file
+@end example
+
+@c PHP mode could ship with a php-completion-file, but that
+@c could require releasing a new version of PHP mode
+@c whenever significant changes occur to the API of PHP.
+
 @c Keep the following notes on third-party packages updated
 @c with respect to managing Emacs settings on a per-project
 @c basis.  Otherwise, delete the paragraph(s).  Perhaps the
@@ -832,13 +849,17 @@ Emacs initialization file (@file{~/.emacs}).
 @node Change Logs
 @chapter Change Logs
 
+@vindex php-beginning-of-defun-regexp
+@vindex add-log-current-defun-header-regexp
 @c This is documented, because PHP mode explicitly supports
-@c the features off add-log by setting the value for the
+@c the features of add-log by setting the value for the
 @c add-log-current-defun-header-regexp to
 @c php-beginning-of-defun-regexp.  This feature is
 @c documented in the PHP manual, but it is worth advertising
 @c to PHP programmers.
 
+@cindex ChangeLog
+@cindex file, ChangeLog
 PHP mode can help generate @file{ChangeLog} files, a
 widely-adopted format for documenting the changes made to
 source code--especially software.  PHP mode and Emacs will
@@ -846,6 +867,12 @@ determine the current function, file name, author
 information and date and use it all to prepare a properly
 formatted @file{ChangeLog} entry in the file.
 
+@cindex Diff mode
+@cindex diff file
+@cindex file, diff
+@cindex patch file
+@cindex file, patch
+@findex add-change-log-entry
 The @code{add-change-log-entry} commands can be run from
 within a buffer containing a PHP buffer, or from a buffer in
 Diff mode with a revision patch to a PHP source file.
@@ -854,6 +881,10 @@ Manual}.
 
 @table @kbd
 
+@cindex ChangeLog entry
+@cindex add ChangeLog entry
+@findex add-change-log-entry-other-window
+@kindex C-x 4 a
 @item C-x 4 a
 Add an entry in a @file{ChangeLog} file opened in another window,
 or add a new line to the already begun entry
@@ -891,6 +922,18 @@ Start a @samp{*Customize*} buffer with the customizable
 settings for PHP mode.
 
 @end table
+
+@c There are other sections that talk about customization,
+@c but they aren't mentioned here and they don't
+@c cross-reference back to this section.
+
+@c Things that aren't documented elsewhere but deserve
+@c documentation, in order of importance:
+
+@c * php-mode-hook
+@c * php-search-url
+@c * php-file-patterns
+@c * php-mode-pear-hook
 
 @node Embedded HTML
 @appendix Embedded HTML
