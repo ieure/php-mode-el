@@ -210,10 +210,12 @@ The traditional point movement commands for Emacs@footnote{@xref{Moving
 Point, Changing the Location of Point, Changing the Location
 of Point, emacs, GNU Emacs Manual}.} and Emacs's C
 mode@footnote{@xref{Movement Commands, Movement Commands,
-Movement Commands, ccmode, CC Mode Manual}.} are supported by
+Movement Commands, ccmode, CC Mode Manual}.} are supported in
 PHP mode.  The following are noteworthy commands for
 working on PHP code or are extensions expressly provided by PHP
 mode.
+
+@table @kbd
 
 @c The forward-sexp command isn't optimally named nor
 @c behaved for a language like PHP, but it comes for free
@@ -223,9 +225,6 @@ mode.
 @c intance, if at the beginning or end of a statement, move
 @c to the next statement.  The syntaxes that would be useful
 @c to move accross would need to be researched.
-
-@table @kbd
-
 @cindex block
 @cindex braces
 @cindex parentheses
@@ -369,7 +368,7 @@ Emacs@footnote{@xref{Indentation Commands, Indentation
 Commands, Indentation Commands, emacs, GNU Emacs Manual}.}
 and Emacs's C mode@footnote{@xref{Indentation Commands,
 Indentation Commands, Indentation Commands, ccmode, CC Mode
-Manual}.}: are supported by PHP mode, following the
+Manual}.}: are supported in PHP mode, following the
 indentation rules of PHP.
 
 @table @kbd
@@ -413,7 +412,7 @@ top-level class (@code{c-indent-defun}).
 @node Editing
 @chapter Editing
 
-@c Consider writing an introduction to this section.
+@c Provide an introduction to this section.
 
 @table @kbd
 
@@ -465,6 +464,7 @@ at the end of the function even if it's not at the
 top-level.  With functions that are methods defined in a
 class, they may be indented and not top-level functions,
 however this command will only mark the current function.
+
 @c Perhaps, M-x mark-defun should be the default for running
 @c C-M-h again.  This is the downside of inheriting C mode's
 @c keybindings.
@@ -660,14 +660,14 @@ Emacs Manual}.}  and Emacs's C mode@footnote{@xref{Comment
 Commands, Comment Commands, Comment Commands, ccmode, CC
 Mode Manual}.}: are supported in PHP mode.  The following
 noteworthy commands are useful for working with PHP or are
-expressly provided for PHP mode.
+extensions expressly provided by PHP mode.
 
 @c These commands aren't provided by PHP mode, but are
 @c important to mention sine the PHP language has comments!
 @c It should probably discuss the various types of comments.
 
 @c A section should explain the phpdoc format as supported
-@c by PHP.
+@c in PHP mode.
 
 @table @kbd
 
@@ -844,7 +844,7 @@ widely-adopted format for documenting the changes made to
 source code--especially software.  PHP mode and Emacs will
 determine the current function, file name, author
 information and date and use it all to prepare a properly
-formatted @file{ChangeLog} entry.
+formatted @file{ChangeLog} entry in the file.
 
 The @code{add-change-log-entry} commands can be run from
 within a buffer containing a PHP buffer, or from a buffer in
@@ -861,7 +861,7 @@ or add a new line to the already begun entry
 file name and the respective function name, when applicable,
 for the current point.  The point can be in a PHP source
 file, or in the hunk of a diff file.@footnote{@xref{Diff
-Mode, Diff Mode, Diff Mode, emacs, GNU Emacs Manual}}
+Mode, Diff Mode, Diff Mode, emacs, GNU Emacs Manual}.}
 This command will also add the current author and date to
 the entry.
 
