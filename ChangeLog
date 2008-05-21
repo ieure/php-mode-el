@@ -1,3 +1,12 @@
+2008-05-21  Aaron S. Hawley  <ashawley-@-sourceforge.net>
+
+	* php-mode.el (php-mode): Add "\s *" after "&?" in
+	defun-prompt-regexp, since functions can have an ampersand before
+	the identifier with whitespace added.
+	(php-speedbar-config, php-mode-speedbar-open, php-manual-url)
+	(php-mode-force-pear): Remove backslash that causes continuation
+	of the line in docstrings.
+
 2008-05-02  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* php-mode.texi (Completion): Give example of making a

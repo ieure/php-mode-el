@@ -124,7 +124,7 @@
   :group 'php)
 
 (defcustom php-speedbar-config t
-  "When set to true automatically configures Speedbar to observe PHP files.\
+  "When set to true automatically configures Speedbar to observe PHP files.
 Ignores php-file patterns option; fixed to expression \"\\.\\(inc\\|php[s34]?\\)\""
   :type 'boolean
   :set (lambda (sym val)
@@ -135,7 +135,7 @@ Ignores php-file patterns option; fixed to expression \"\\.\\(inc\\|php[s34]?\\)
   :group 'php)
 
 (defcustom php-mode-speedbar-open nil
-  "Normally `php-mode' starts with the speedbar closed.\
+  "Normally `php-mode' starts with the speedbar closed.
 Turning this on will open it whenever `php-mode' is loaded."
   :type 'boolean
   :set (lambda (sym val)
@@ -145,7 +145,7 @@ Turning this on will open it whenever `php-mode' is loaded."
   :group 'php)
 
 (defcustom php-manual-url "http://www.php.net/manual/en/"
-  "URL at which to find PHP manual.\
+  "URL at which to find PHP manual.
 You can replace \"en\" with your ISO language code."
   :type 'string
   :group 'php)
@@ -189,7 +189,7 @@ You can replace \"en\" with your ISO language code."
   :group 'php)
 
 (defcustom php-mode-force-pear nil
-  "Normally PEAR coding rules are enforced only when the filename contains \"PEAR\"\
+  "Normally PEAR coding rules are enforced only when the filename contains \"PEAR\"
 Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
@@ -358,7 +358,7 @@ See `php-beginning-of-defun'."
   (set (make-local-variable 'open-paren-in-column-0-is-defun-start)
        nil)
   (set (make-local-variable 'defun-prompt-regexp)
-       "^\\s *function\\s +&?\\(\\(\\sw\\|\\s_\\)+\\)\\s *")
+       "^\\s *function\\s +&?\\s *\\(\\(\\sw\\|\\s_\\)+\\)\\s *")
   (set (make-local-variable 'add-log-current-defun-header-regexp)
        php-beginning-of-defun-regexp)
 
