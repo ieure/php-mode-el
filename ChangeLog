@@ -1,5 +1,13 @@
 2008-05-21  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
+	* php-mode.texi (Indentation): PHP mode's indentation rules are
+	inherited from C mode, not the PEAR coding standards by default.
+	Explain when PEAR indentation is on.
+	(Indentation, Motion, Completion, Embedded HTML): Modify various
+	concept index entries.
+	(Completion, Index Menu): Use "its" when describing the value of a
+	variable.
+
 	* php-mode.el (php-mode): Add "\s *" after "&?" in
 	defun-prompt-regexp, since functions can have an ampersand before
 	the identifier with whitespace added.
