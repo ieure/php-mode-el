@@ -1,3 +1,7 @@
+2008-10-20  Dias Badekas <dbadekas-@-aia.gr>
+
+	* php-mode.el (php-constants): Add date and time constants of PHP.
+
 2008-05-21  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* php-mode.texi (Indentation): PHP mode's indentation rules are

@@ -67,7 +67,7 @@
 ;; Sammartino, ppercot, Valentin Funk, Stig Bakken, Gregory Stark,
 ;; Chris Morris, Nils Rennebarth, Gerrit Riessen, Eric Mc Sween,
 ;; Ville Skytta, Giacomo Tesio, Lennart Borgman, Stefan Monnier,
-;; Aaron S. Hawley, Ian Eure, Bill Lovett
+;; Aaron S. Hawley, Ian Eure, Bill Lovett, Dias Badekas
 
 ;;; Changelog:
 
@@ -555,7 +555,14 @@ for \\[find-tag] (which see)."
        "PHP_LOCALSTATEDIR" "PHP_CONFIG_FILE_PATH"
        "PHP_EOL"
 
-       ;; from ext/standard:
+
+       ;; date and time constants
+       "DATE_ATOM" "DATE_COOKIE" "DATE_ISO8601"
+       "DATE_RFC822" "DATE_RFC850" "DATE_RFC1036" "DATE_RFC1123"
+       "DATE_RFC2822" "DATE_RFC3339"
+       "DATE_RSS" "DATE_W3C"
+
+      ;; from ext/standard:
        "EXTR_OVERWRITE" "EXTR_SKIP" "EXTR_PREFIX_SAME"
        "EXTR_PREFIX_ALL" "EXTR_PREFIX_INVALID" "SORT_ASC" "SORT_DESC"
        "SORT_REGULAR" "SORT_NUMERIC" "SORT_STRING" "ASSERT_ACTIVE"
@@ -729,6 +736,7 @@ for \\[find-tag] (which see)."
 ;        "MCAL_M_WEEKEND" "MCAL_M_ALLDAYS" "MCRYPT_" "MCRYPT_"
 ;        "MCRYPT_ENCRYPT" "MCRYPT_DECRYPT" "MCRYPT_DEV_RANDOM"
 ;        "MCRYPT_DEV_URANDOM" "MCRYPT_RAND" "SWFBUTTON_HIT"
+;        "SUNFUNCS_RET_STRING" "SUNFUNCS_RET_DOUBLE"
 ;        "SWFBUTTON_DOWN" "SWFBUTTON_OVER" "SWFBUTTON_UP"
 ;        "SWFBUTTON_MOUSEUPOUTSIDE" "SWFBUTTON_DRAGOVER"
 ;        "SWFBUTTON_DRAGOUT" "SWFBUTTON_MOUSEUP" "SWFBUTTON_MOUSEDOWN"
