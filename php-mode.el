@@ -1070,15 +1070,15 @@ for \\[find-tag] (which see)."
 (defvar php-imenu-generic-expression
  '(
    ("All Functions"
-    "^\\s-*function\\s-+\\([[:alnum:]_]+\\)\\s-*(" 1)
+    "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
    ("Classes"
-    "^\\s-*class\\s-+\\([[:alnum:]_]+\\)\\s-*" 1)
+    "^\\s-*class\\s-+\\(\\sw+\\|\\s_+\\)\\s-*" 1)
    ("Public Methods"
-    "^\\s-*public function\\s-+\\([[:alnum:]_]+\\)\\s-*(" 1)
+    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?public\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
    ("Protected Methods"
-    "^\\s-*protected function\\s-+\\([[:alnum:]_]+\\)\\s-*(" 1)
+    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?protected\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
    ("Private Methods"
-    "^\\s-*private function\\s-+\\([[:alnum:]_]+\\)\\s-*(" 1)
+    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?private\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
    )
  "Imenu generic expression for PHP Mode. See `imenu-generic-expression'."
  )

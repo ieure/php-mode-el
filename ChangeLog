@@ -6,6 +6,8 @@
 	(php-check-html-for-indentation, defun-prompt-regexp)
 	(php-class-key): Make regular expressions consistent for
 	whitespace characters by using "\s-".
+	(php-imenu-generic-expression): Support abstract, final, static,
+	public, private and protected keywords in Imenu.
 
 2008-10-20  Dias Badekas <dbadekas-@-aia.gr>
 
