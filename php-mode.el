@@ -204,7 +204,7 @@ Turning this on will force PEAR rules on all PHP files."
 	   php-mode-version-number php-mode-modified))
 
 (defconst php-beginning-of-defun-regexp
-  "^\\s *\\(\\(abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s +\\)*function\\s +&?\\(\\(\\sw\\|\\s_\\)+\\)\\s *("
+  "^\\s-*\\(\\(abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+&?\\(\\sw+\\|\\s_+\\)\\s-*("
   "Regular expression for a PHP function.")
 
 (defun php-beginning-of-defun (&optional arg)
@@ -244,7 +244,7 @@ See `php-beginning-of-defun'."
 
 ;; Do it but tell it is not good if html tags in buffer.
 (defun php-check-html-for-indentation ()
-  (let ((html-tag-re "^\\s *</?\\sw+.*?>")
+  (let ((html-tag-re "^\\s-*</?\\sw+.*?>")
         (here (point)))
     (if (not (or (re-search-forward html-tag-re (line-end-position) t)
                  (re-search-backward html-tag-re (line-beginning-position) t)))
@@ -358,7 +358,7 @@ See `php-beginning-of-defun'."
   (set (make-local-variable 'open-paren-in-column-0-is-defun-start)
        nil)
   (set (make-local-variable 'defun-prompt-regexp)
-       "^\\s *function\\s +&?\\s *\\(\\(\\sw\\|\\s_\\)+\\)\\s *")
+       "^\\s-*function\\s-+&?\\s-*\\(\\(\\sw\\|\\s_\\)+\\)\\s-*")
   (set (make-local-variable 'add-log-current-defun-header-regexp)
        php-beginning-of-defun-regexp)
 
@@ -1096,10 +1096,10 @@ for \\[find-tag] (which see)."
 
 (defconst php-class-key
   (concat
-   "\\(" (regexp-opt php-class-decl-kwds) "\\)\\s +"
+   "\\(" (regexp-opt php-class-decl-kwds) "\\)\\s-+"
    c-symbol-key					;; Class name.
-   "\\(\\s *extends\\s *" c-symbol-key "\\)?"	;; Name of superclass.
-   "\\(\\s *implements *[^{]+{\\)?")) ;; List of any adopted protocols.
+   "\\(\\s-*extends\\s-*" c-symbol-key "\\)?"	;; Name of superclass.
+   "\\(\\s-*implements\\s-*[^{]+{\\)?")) ;; List of any adopted protocols.
 
 ;; Create "php-default-face" symbol for GNU Emacs so that both XEmacs
 ;; and GNU emacs can refer to the default face.

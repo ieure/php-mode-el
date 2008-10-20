@@ -3,6 +3,9 @@
 	* php-mode.el (php-check-html-for-indentation): Change regular
 	expression for indentation warning to match only HTML at the
 	beginning of the line.
+	(php-check-html-for-indentation, defun-prompt-regexp)
+	(php-class-key): Make regular expressions consistent for
+	whitespace characters by using "\s-".
 
 2008-10-20  Dias Badekas <dbadekas-@-aia.gr>
 
