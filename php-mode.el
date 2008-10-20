@@ -7,7 +7,7 @@
 ;; Author: Turadg Aleahmad, 1999-2004
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2008-04-12
+;; Modified: 2008-10-20
 ;; X-URL:   http://php-mode.sourceforge.net/
 
 (defconst php-mode-version-number "1.4.1-alpha"
@@ -194,7 +194,7 @@ Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
-(defconst php-mode-modified "2008-04-12"
+(defconst php-mode-modified "2008-10-20"
   "PHP Mode build date.")
 
 (defun php-mode-version ()
@@ -244,7 +244,7 @@ See `php-beginning-of-defun'."
 
 ;; Do it but tell it is not good if html tags in buffer.
 (defun php-check-html-for-indentation ()
-  (let ((html-tag-re "</?\\sw+.*?>")
+  (let ((html-tag-re "^\\s *</?\\sw+.*?>")
         (here (point)))
     (if (not (or (re-search-forward html-tag-re (line-end-position) t)
                  (re-search-backward html-tag-re (line-beginning-position) t)))
