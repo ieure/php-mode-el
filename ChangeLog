@@ -1,3 +1,14 @@
+2008-10-21  Aaron S. Hawley  <ashawley-@-sourceforge.net>
+
+	* php-mode.el (php-imenu-generic-expression)
+	(php-block-stmt-1-kwds, php-block-stmt-2-kwds)
+	(php-block-stmt-1-key, php-block-stmt-2-key)
+	(php-class-decl-kwds, php-class-key): Move some definitions to
+	earlier in the file to avoid "free variable" warnings on byte
+	compilation.
+	(php-tags-key) Remove eval-when-compile for strange
+	compilation error about void variable php-tags.
+
 2008-10-20  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* php-mode.el (php-check-html-for-indentation): Change regular

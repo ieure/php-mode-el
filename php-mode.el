@@ -144,6 +144,22 @@ Turning this on will open it whenever `php-mode' is loaded."
              (speedbar 1)))
   :group 'php)
 
+(defvar php-imenu-generic-expression
+ '(
+   ("All Functions"
+    "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
+   ("Classes"
+    "^\\s-*class\\s-+\\(\\sw+\\|\\s_+\\)\\s-*" 1)
+   ("Public Methods"
+    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?public\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
+   ("Protected Methods"
+    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?protected\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
+   ("Private Methods"
+    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?private\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
+   )
+ "Imenu generic expression for PHP Mode. See `imenu-generic-expression'."
+ )
+
 (defcustom php-manual-url "http://www.php.net/manual/en/"
   "URL at which to find PHP manual.
 You can replace \"en\" with your ISO language code."
@@ -269,7 +285,25 @@ See `php-beginning-of-defun'."
       (funcall 'c-indent-line)))
 
 (defconst php-tags '("<?php" "?>" "<?" "<?="))
-(defconst php-tags-key (eval-when-compile (regexp-opt php-tags)))
+(defconst php-tags-key (regexp-opt php-tags))
+
+(defconst php-block-stmt-1-kwds '("do" "else" "finally" "try"))
+(defconst php-block-stmt-2-kwds
+  '("for" "if" "while" "switch" "foreach" "elseif"  "catch all"))
+
+(defconst php-block-stmt-1-key
+  (regexp-opt php-block-stmt-1-kwds))
+(defconst php-block-stmt-2-key
+  (regexp-opt php-block-stmt-2-kwds))
+
+(defconst php-class-decl-kwds '("class" "interface"))
+
+(defconst php-class-key
+  (concat
+   "\\(" (regexp-opt php-class-decl-kwds) "\\)\\s-+"
+   c-symbol-key                                 ;; Class name.
+   "\\(\\s-*extends\\s-*" c-symbol-key "\\)?"   ;; Name of superclass.
+   "\\(\\s-*implements\\s-*[^{]+{\\)?")) ;; List of any adopted protocols.
 
 ;;;###autoload
 (define-derived-mode php-mode c-mode "PHP"
@@ -1066,40 +1100,6 @@ for \\[find-tag] (which see)."
 
     ))
   "Gauchy level highlighting for PHP mode.")
-
-(defvar php-imenu-generic-expression
- '(
-   ("All Functions"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
-   ("Classes"
-    "^\\s-*class\\s-+\\(\\sw+\\|\\s_+\\)\\s-*" 1)
-   ("Public Methods"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?public\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
-   ("Protected Methods"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?protected\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
-   ("Private Methods"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?private\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
-   )
- "Imenu generic expression for PHP Mode. See `imenu-generic-expression'."
- )
-
-(defconst php-block-stmt-1-kwds '("do" "else" "finally" "try"))
-(defconst php-block-stmt-2-kwds
-  '("for" "if" "while" "switch" "foreach" "elseif"  "catch all"))
-
-(defconst php-block-stmt-1-key
-  (regexp-opt php-block-stmt-1-kwds))
-(defconst php-block-stmt-2-key
-  (regexp-opt php-block-stmt-2-kwds))
-
-(defconst php-class-decl-kwds '("class" "interface"))
-
-(defconst php-class-key
-  (concat
-   "\\(" (regexp-opt php-class-decl-kwds) "\\)\\s-+"
-   c-symbol-key					;; Class name.
-   "\\(\\s-*extends\\s-*" c-symbol-key "\\)?"	;; Name of superclass.
-   "\\(\\s-*implements\\s-*[^{]+{\\)?")) ;; List of any adopted protocols.
 
 ;; Create "php-default-face" symbol for GNU Emacs so that both XEmacs
 ;; and GNU emacs can refer to the default face.
