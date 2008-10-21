@@ -83,17 +83,16 @@
 
 2008-04-06  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
-	* php-mode.el (php-show-arglist, php-font-lock-keywords-1)
+	* php-mode.el: Change incorrect year, "2007", in "Modified" field
+	at top of file.
+	(php-mode-version-number): Mark as "alpha" release.
+	(php-show-arglist, php-font-lock-keywords-1)
 	(php-font-lock-keywords-2): Replace "\\s-" for "[ \t]" in regular
 	expressions to maintain consistency.
 	(php-imenu-generic-expression): Delete comment explaining Imenu,
 	since it's documented *correctly* in the manual.
-	(php-mode): Remove definition php-mode-syntax-table
-	and XEmacs bits that likely don't even work.
-
-	* php-mode.el: Change incorrect year, "2007", in "Modified" field
-	at top of file.
-	(php-mode-version-number): Mark as "alpha" release.
+	(php-mode): Remove definition php-mode-syntax-table and XEmacs
+	bits that likely don't even work.
 
 2008-01-25  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
