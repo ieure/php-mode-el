@@ -7,7 +7,7 @@
 ;; Author: Turadg Aleahmad, 1999-2004
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2008-10-20
+;; Modified: 2008-10-23
 ;; X-URL:   http://php-mode.sourceforge.net/
 
 (defconst php-mode-version-number "1.4.1-alpha"
@@ -67,7 +67,7 @@
 ;; Sammartino, ppercot, Valentin Funk, Stig Bakken, Gregory Stark,
 ;; Chris Morris, Nils Rennebarth, Gerrit Riessen, Eric Mc Sween,
 ;; Ville Skytta, Giacomo Tesio, Lennart Borgman, Stefan Monnier,
-;; Aaron S. Hawley, Ian Eure, Bill Lovett, Dias Badekas
+;; Aaron S. Hawley, Ian Eure, Bill Lovett, Dias Badekas, David House
 
 ;;; Changelog:
 
@@ -210,7 +210,7 @@ Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
-(defconst php-mode-modified "2008-10-20"
+(defconst php-mode-modified "2008-10-23"
   "PHP Mode build date.")
 
 (defun php-mode-version ()
