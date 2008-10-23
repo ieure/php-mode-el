@@ -146,16 +146,16 @@ Turning this on will open it whenever `php-mode' is loaded."
 
 (defvar php-imenu-generic-expression
  '(
-   ("All Functions"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
-   ("Classes"
-    "^\\s-*class\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*" 1)
-   ("Public Methods"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?public\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
-   ("Protected Methods"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?protected\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
    ("Private Methods"
     "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?private\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
+   ("Protected Methods"
+    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?protected\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
+   ("Public Methods"
+    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?public\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
+   ("Classes"
+    "^\\s-*class\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*" 1)
+   ("All Functions"
+    "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
    )
  "Imenu generic expression for PHP Mode. See `imenu-generic-expression'."
  )
@@ -252,9 +252,6 @@ See `php-beginning-of-defun'."
   (php-beginning-of-defun (- (or arg 1))))
 
 
-(defvar php-completion-table nil
-  "Obarray of tag names defined in current tags table and functions know to PHP.")
-
 (defvar php-warned-bad-indent nil)
 (make-variable-buffer-local 'php-warned-bad-indent)
 
@@ -415,6 +412,9 @@ See `php-beginning-of-defun'."
   '("Search documentation" . php-search-documentation))
 
 ;; Define function name completion function
+(defvar php-completion-table nil
+  "Obarray of tag names defined in current tags table and functions know to PHP.")
+
 (defun php-complete-function ()
   "Perform function completion on the text around point.
 Completes to the set of names listed in the current tags table
