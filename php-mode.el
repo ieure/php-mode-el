@@ -975,16 +975,16 @@ for \\[find-tag] (which see)."
   (list
    ;; Fontify constants
    (cons
-    (concat "[^_$]\\<\\(" php-constants "\\)\\>[^_]")
+    (concat "[^_$]?\\<\\(" php-constants "\\)\\>[^_]?")
     '(1 font-lock-constant-face))
 
    ;; Fontify keywords
    (cons
-    (concat "[^_$]\\<\\(" php-keywords "\\)\\>[^_]")
+    (concat "[^_$]?\\<\\(" php-keywords "\\)\\>[^_]?")
     '(1 font-lock-keyword-face))
 
    ;; Fontify keywords and targets, and case default tags.
-   (list "[^_$]\\<\\(break\\|case\\|continue\\)\\>\\s-*\\(-?\\(?:\\sw\\|\\s_\\)+\\)?"
+   (list "[^_$]?\\<\\(break\\|case\\|continue\\)\\>\\s-*\\(-?\\(?:\\sw\\|\\s_\\)+\\)?"
 	 '(1 font-lock-keyword-face) '(2 font-lock-constant-face t t))
    ;; This must come after the one for keywords and targets.
    '(":" ("^\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*:\\s-*$"
@@ -993,7 +993,7 @@ for \\[find-tag] (which see)."
 
    ;; treat 'print' as keyword only when not used like a function name
    '("\\<print\\s-*(" . php-default-face)
-   '("[^_$]\\<\\(print\\)\\>[^_]" (1 font-lock-keyword-face))
+   '("[^_$]?\\<\\(print\\)\\>[^_]?" (1 font-lock-keyword-face))
 
    ;; Fontify PHP tag
    (cons php-tags-key font-lock-preprocessor-face)
@@ -1011,7 +1011,7 @@ for \\[find-tag] (which see)."
    (list
 
     ;; class declaration
-    '("[^_]\\<\\(class\\|interface\\)\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
+    '("[^_]?\\<\\(class\\|interface\\)\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
       (1 font-lock-keyword-face) (2 font-lock-type-face nil t))
     ;; handle several words specially, to include following word,
     ;; thereby excluding it from unknown-symbol checks later
@@ -1026,7 +1026,7 @@ for \\[find-tag] (which see)."
       (2 font-lock-function-name-face nil t))
 
     ;; class hierarchy
-    '("[^_$]\\<\\(self\\|parent\\)\\>[^_]" (1 font-lock-constant-face nil nil))
+    '("[^_$]?\\<\\(self\\|parent\\)\\>[^_]?" (1 font-lock-constant-face nil nil))
 
     ;; method and variable features
     '("\\<\\(private\\|protected\\|public\\)\\s-+\\$?\\(?:\\sw\\|\\s_\\)+"

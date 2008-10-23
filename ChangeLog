@@ -1,3 +1,10 @@
+2008-10-23  David House <dmhouse-@-gmail.com>
+
+	* php-mode.el (php-font-lock-keywords-1)
+	(php-font-lock-keywords-2): Fix regular expression for
+	highlighting various keywords when they're at the beginning or end
+	of the line.
+
 2008-10-22  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* php-mode.el (php-imenu-generic-expression)
