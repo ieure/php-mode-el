@@ -147,15 +147,15 @@ Turning this on will open it whenever `php-mode' is loaded."
 (defvar php-imenu-generic-expression
  '(
    ("All Functions"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
+    "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
    ("Classes"
-    "^\\s-*class\\s-+\\(\\sw+\\|\\s_+\\)\\s-*" 1)
+    "^\\s-*class\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*" 1)
    ("Public Methods"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?public\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
+    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?public\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
    ("Protected Methods"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?protected\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
+    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?protected\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
    ("Private Methods"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?private\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\sw+\\|\\s_+\\)\\s-*(" 1)
+    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?private\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
    )
  "Imenu generic expression for PHP Mode. See `imenu-generic-expression'."
  )
@@ -220,7 +220,7 @@ Turning this on will force PEAR rules on all PHP files."
 	   php-mode-version-number php-mode-modified))
 
 (defconst php-beginning-of-defun-regexp
-  "^\\s-*\\(\\(abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+&?\\(\\sw+\\|\\s_+\\)\\s-*("
+  "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
   "Regular expression for a PHP function.")
 
 (defun php-beginning-of-defun (&optional arg)
@@ -948,7 +948,7 @@ for \\[find-tag] (which see)."
        "endfor" "endforeach" "endif" "endswitch" "endwhile" "exit"
        "extends" "for" "foreach" "global" "if" "include" "include_once"
        "next" "or" "require" "require_once" "return" "static" "switch"
-       "then" "var" "while" "xor" "private" "throw" "catch" "try"
+       "then" "var" "while" "xor" "throw" "catch" "try"
        "instanceof" "catch all" "finally")))
   "PHP keywords.")
 
@@ -976,12 +976,12 @@ for \\[find-tag] (which see)."
    ;; Fontify constants
    (cons
     (concat "[^_$]\\<\\(" php-constants "\\)\\>[^_]")
-    'font-lock-constant-face)
+    '(1 font-lock-constant-face))
 
    ;; Fontify keywords
    (cons
     (concat "[^_$]\\<\\(" php-keywords "\\)\\>[^_]")
-    'font-lock-keyword-face)
+    '(1 font-lock-keyword-face))
 
    ;; Fontify keywords and targets, and case default tags.
    (list "[^_$]\\<\\(break\\|case\\|continue\\)\\>\\s-*\\(-?\\(?:\\sw\\|\\s_\\)+\\)?"

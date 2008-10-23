@@ -1,3 +1,16 @@
+2008-10-22  Aaron S. Hawley  <ashawley-@-sourceforge.net>
+
+	* php-mode.el (php-imenu-generic-expression)
+	(php-beginning-of-defun-regexp): Fix regular expression that is
+	failing to match identifiers in function definitions for Imenu and
+	add-change-log commands.
+	(php-keywords): Remove "private" since its handled like
+	"protected" and "public", not as a generic keyword.
+	(php-font-lock-keywords-1): The use of grouping in the regular
+	expression for php-constants and php-keywords added on 2008-04-12
+	requires referencing the group number to highlight, otherwrise the
+	entire match is highlighted.
+
 2008-10-21  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* php-mode.el (php-imenu-generic-expression)
