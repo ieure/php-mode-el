@@ -11,6 +11,25 @@
 	requires referencing the group number to highlight, otherwrise the
 	entire match is highlighted.
 
+	* php-mode.texi: Fix typos and fill long paragraphs.  Add
+	maintainer comment near top of file.  Correct maintainer email
+	address with working address.
+	(Introduction): Add index entry for M-x php-mode-version.
+	(Installation): New section.
+	(Editing): Change concept index entry of fill-column to a variable
+	index entry.
+	(Completion): Add index entry for M-x visit-tags-table, and M-x
+	customize-variable.
+	(Index Menu): Finish maintainer comments on Imenu.  "Functions"
+	sub-menu is now named "All Functions".  Document new sub-menus
+	"Public methods", "Private methods", "Protected methods".  Add
+	index entry for M-x customize-variable.
+	(Customization): Add index entry for M-x customize-group.
+	(Embedded HTML): Add index entry for M-x html-mode and M-x
+	html-mode.
+	(Contributors): Add Dias Badekas.
+	(Concept Index): Add maintainer notes on indexing.
+
 2008-10-21  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* php-mode.el (php-imenu-generic-expression)
