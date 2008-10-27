@@ -114,7 +114,7 @@ Ignores php-file patterns option; fixed to expression \"\\.\\(inc\\|php[s34]?\\)
          (set-default sym val)
          (if (and val (boundp 'speedbar))
              (speedbar-add-supported-extension
-	      "\\.\\(inc\\|php[s34]?\\|phtml\\)")))
+              "\\.\\(inc\\|php[s34]?\\|phtml\\)")))
   :group 'php)
 
 (defcustom php-mode-speedbar-open nil
@@ -140,7 +140,7 @@ Turning this on will open it whenever `php-mode' is loaded."
    ("All Functions"
     "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
    )
- "Imenu generic expression for PHP Mode. See `imenu-generic-expression'."
+ "Imenu generic expression for PHP Mode.  See `imenu-generic-expression'."
  )
 
 (defcustom php-manual-url "http://www.php.net/manual/en/"
@@ -200,7 +200,7 @@ Turning this on will force PEAR rules on all PHP files."
   "Display string describing the version of PHP mode"
   (interactive)
   (message "PHP mode %s of %s"
-	   php-mode-version-number php-mode-modified))
+           php-mode-version-number php-mode-modified))
 
 (defconst php-beginning-of-defun-regexp
   "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
@@ -213,18 +213,18 @@ Implements PHP version of `beginning-of-defun-function'."
   (let ((arg (or arg 1)))
     (while (> arg 0)
       (re-search-backward php-beginning-of-defun-regexp
-			  nil 'noerror)
+                          nil 'noerror)
       (setq arg (1- arg)))
     (while (< arg 0)
       (end-of-line 1)
       (let ((opoint (point)))
-	(beginning-of-defun 1)
-	(forward-list 2)
-	(forward-line 1)
-	(if (eq opoint (point))
-	    (re-search-forward php-beginning-of-defun-regexp
-			       nil 'noerror))
-	(setq arg (1+ arg))))))
+        (beginning-of-defun 1)
+        (forward-list 2)
+        (forward-line 1)
+        (if (eq opoint (point))
+            (re-search-forward php-beginning-of-defun-regexp
+                               nil 'noerror))
+        (setq arg (1+ arg))))))
 
 (defun php-end-of-defun (&optional arg)
   "Move the end of the ARGth PHP function from point.
@@ -248,10 +248,10 @@ See `php-beginning-of-defun'."
       (goto-char here)
       (setq php-warned-bad-indent t)
       (lwarn 'php-indent :warning
-	     "\n\t%s\n\t%s\n\t%s\n"
-	     "Indentation fails badly with mixed HTML and PHP."
-	     "Look for an Emacs Lisp library that supports \"multiple"
-	     "major modes\" like mumamo, mmm-mode or multi-mode.")
+             "\n\t%s\n\t%s\n\t%s\n"
+             "Indentation fails badly with mixed HTML and PHP."
+             "Look for an Emacs Lisp library that supports \"multiple"
+             "major modes\" like mumamo, mmm-mode or multi-mode.")
       nil)))
 
 (defun php-cautious-indent-region (start end &optional quiet)
@@ -263,13 +263,13 @@ See `php-beginning-of-defun'."
   (if (or php-warned-bad-indent
           (php-check-html-for-indentation))
       (funcall 'c-indent-line)))
-
+
 (defconst php-tags '("<?php" "?>" "<?" "<?="))
 (defconst php-tags-key (regexp-opt php-tags))
 
 (defconst php-block-stmt-1-kwds '("do" "else" "finally" "try"))
 (defconst php-block-stmt-2-kwds
-  '("for" "if" "while" "switch" "foreach" "elseif"  "catch all"))
+  '("for" "if" "while" "switch" "foreach" "elseif" "catch all"))
 
 (defconst php-block-stmt-1-key
   (regexp-opt php-block-stmt-1-kwds))
@@ -347,12 +347,12 @@ See `php-beginning-of-defun'."
 
   ;; PEAR coding standards
   (add-hook 'php-mode-pear-hook
-	    (lambda ()
-	      (set (make-local-variable 'tab-width) 4)
-	      (set (make-local-variable 'c-basic-offset) 4)
-	      (set (make-local-variable 'indent-tabs-mode) nil)
-	      (c-set-offset 'block-open' - )
-	      (c-set-offset 'block-close' 0 )) nil t)
+            (lambda ()
+              (set (make-local-variable 'tab-width) 4)
+              (set (make-local-variable 'c-basic-offset) 4)
+              (set (make-local-variable 'indent-tabs-mode) nil)
+              (c-set-offset 'block-open' - )
+              (c-set-offset 'block-close' 0 )) nil t)
 
   (if (or php-mode-force-pear
           (and (stringp buffer-file-name)
@@ -493,13 +493,13 @@ for \\[find-tag] (which see)."
     (while (looking-at "\\sw\\|\\s_")
       (forward-char 1))
     (if (or (re-search-backward "\\sw\\|\\s_"
-				(save-excursion (beginning-of-line) (point))
-				t)
-	    (re-search-forward "\\(\\sw\\|\\s_\\)+"
-			       (save-excursion (end-of-line) (point))
-			       t))
-	(progn (goto-char (match-end 0))
-	       (buffer-substring-no-properties
+                                (save-excursion (beginning-of-line) (point))
+                                t)
+            (re-search-forward "\\(\\sw\\|\\s_\\)+"
+                               (save-excursion (end-of-line) (point))
+                               t))
+        (progn (goto-char (match-end 0))
+               (buffer-substring-no-properties
                 (point)
                 (progn (forward-sexp -1)
                        (while (looking-at "\\s'")
@@ -577,7 +577,7 @@ for \\[find-tag] (which see)."
        "DATE_RFC2822" "DATE_RFC3339"
        "DATE_RSS" "DATE_W3C"
 
-      ;; from ext/standard:
+       ;; from ext/standard:
        "EXTR_OVERWRITE" "EXTR_SKIP" "EXTR_PREFIX_SAME"
        "EXTR_PREFIX_ALL" "EXTR_PREFIX_INVALID" "SORT_ASC" "SORT_DESC"
        "SORT_REGULAR" "SORT_NUMERIC" "SORT_STRING" "ASSERT_ACTIVE"
@@ -924,7 +924,7 @@ for \\[find-tag] (which see)."
   (eval-when-compile
     (regexp-opt
      ;; "class", "new" and "extends" get special treatment
-     ;; "case" and  "default" get special treatment elsewhere
+     ;; "case" and "default" get special treatment elsewhere
      '("and" "as" "break" "continue" "declare" "do" "echo" "else" "elseif"
        "endfor" "endforeach" "endif" "endswitch" "endwhile" "exit"
        "extends" "for" "foreach" "global" "if" "include" "include_once"
@@ -941,16 +941,16 @@ for \\[find-tag] (which see)."
 (defconst php-types
   (eval-when-compile
     (regexp-opt '("array" "bool" "boolean" "char" "const" "double" "float"
-		  "int" "integer" "long" "mixed" "object" "real"
-		  "string")))
+                  "int" "integer" "long" "mixed" "object" "real"
+                  "string")))
   "PHP types.")
 
 (defconst php-superglobals
   (eval-when-compile
     (regexp-opt '("_GET" "_POST" "_COOKIE" "_SESSION" "_ENV" "GLOBALS"
-		  "_SERVER" "_FILES" "_REQUEST")))
+                  "_SERVER" "_FILES" "_REQUEST")))
   "PHP superglobal variables.")
-
+
 ;; Set up font locking
 (defconst php-font-lock-keywords-1
   (list
@@ -966,11 +966,11 @@ for \\[find-tag] (which see)."
 
    ;; Fontify keywords and targets, and case default tags.
    (list "[^_$]?\\<\\(break\\|case\\|continue\\)\\>\\s-*\\(-?\\(?:\\sw\\|\\s_\\)+\\)?"
-	 '(1 font-lock-keyword-face) '(2 font-lock-constant-face t t))
+         '(1 font-lock-keyword-face) '(2 font-lock-constant-face t t))
    ;; This must come after the one for keywords and targets.
    '(":" ("^\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*:\\s-*$"
-	  (beginning-of-line) (end-of-line)
-	  (1 font-lock-constant-face)))
+          (beginning-of-line) (end-of-line)
+          (1 font-lock-constant-face)))
 
    ;; treat 'print' as keyword only when not used like a function name
    '("\\<print\\s-*(" . php-default-face)
@@ -1073,8 +1073,8 @@ for \\[find-tag] (which see)."
     '("->\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" . (1 php-default-face t t)) ; ->function_call
     '("\\(\\(?:\\sw\\|\\s_\\)+\\)::\\(?:\\sw\\|\\s_\\)+\\s-*(?" . (1 font-lock-type-face)) ; class::member
     '("::\\(\\(?:\\sw\\|\\s_\\)+\\>[^(]\\)" . (1 php-default-face)) ; class::constant
-    '("\\<\\(?:\\sw\\|\\s_\\)+\\s-*[[(]" . php-default-face)	; word( or word[
-    '("\\<[0-9]+" . php-default-face)		; number (also matches word)
+    '("\\<\\(?:\\sw\\|\\s_\\)+\\s-*[[(]" . php-default-face)    ; word( or word[
+    '("\\<[0-9]+" . php-default-face)           ; number (also matches word)
 
     ;; Warn on any words not already fontified
     '("\\<\\(?:\\sw\\|\\s_\\)+\\>" . font-lock-warning-face)

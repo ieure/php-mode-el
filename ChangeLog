@@ -1,7 +1,8 @@
 2008-10-27  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* php-mode.el: Removed items in the ChangeLog section.  A
-	ChangeLog file is now included with the source package.
+	ChangeLog file is now included with the source package.  Convert
+	tabs to spaces.  Add form feed characters between sections.
 	(php-default-face, font-lock-keyword-face)
 	(font-lock-constant-face): Remove conditional bindings and XEmacs
 	code that likely does nothing.
