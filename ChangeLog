@@ -3,7 +3,8 @@
 	* php-mode.el: Removed items in the ChangeLog section.  A
 	ChangeLog file is now included with the source package.  Convert
 	tabs to spaces.  Add form feed characters between sections.
-	Fix indentation levels.
+	Fix indentation levels.  Fix various typos and documentation
+	string errors.  Make in-line comment style consistent.
 	(php-default-face, font-lock-keyword-face)
 	(font-lock-constant-face): Remove conditional bindings and XEmacs
 	code that likely does nothing.

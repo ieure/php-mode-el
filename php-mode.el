@@ -150,17 +150,17 @@ You can replace \"en\" with your ISO language code."
   :group 'php)
 
 (defcustom php-search-url "http://www.php.net/"
-  "URL at which to search for documentation on a word"
+  "URL at which to search for documentation on a word."
   :type 'string
   :group 'php)
 
 (defcustom php-completion-file ""
-  "Path to the file which contains the function names known to PHP"
+  "Path to the file which contains the function names known to PHP."
   :type 'string
   :group 'php)
 
 (defcustom php-manual-path ""
-  "Path to the directory which contains the PHP manual"
+  "Path to the directory which contains the PHP manual."
   :type 'string
   :group 'php)
 
@@ -188,7 +188,7 @@ You can replace \"en\" with your ISO language code."
   :group 'php)
 
 (defcustom php-mode-force-pear nil
-  "Normally PEAR coding rules are enforced only when the filename contains \"PEAR\"
+  "Normally PEAR coding rules are enforced only when the filename contains \"PEAR.\"
 Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
@@ -197,11 +197,11 @@ Turning this on will force PEAR rules on all PHP files."
   "PHP Mode build date.")
 
 (defun php-mode-version ()
-  "Display string describing the version of PHP mode"
+  "Display string describing the version of PHP mode."
   (interactive)
   (message "PHP mode %s of %s"
            php-mode-version-number php-mode-modified))
-
+
 (defconst php-beginning-of-defun-regexp
   "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
   "Regular expression for a PHP function.")
@@ -396,7 +396,7 @@ See `php-beginning-of-defun'."
 
 ;; Define function name completion function
 (defvar php-completion-table nil
-  "Obarray of tag names defined in current tags table and functions know to PHP.")
+  "Obarray of tag names defined in current tags table and functions known to PHP.")
 
 (defun php-complete-function ()
   "Perform function completion on the text around point.
@@ -428,9 +428,10 @@ for \\[find-tag] (which see)."
                 (all-completions pattern php-functions)))
              (message "Making completion list...%s" "done"))))))
 
-;; Build php-completion-table on demand.  The table includes the
-;; PHP functions and the tags from the current tags-file-name
 (defun php-completion-table ()
+  "Build variable `php-completion-table' on demand.
+The table includes the PHP functions and the tags from the
+current `tags-file-name'."
   (or (and tags-file-name
            (save-excursion (tags-verify-table tags-file-name))
            php-completion-table)
@@ -522,11 +523,11 @@ for \\[find-tag] (which see)."
                        (match-beginning 1) (match-end 1)))))
     (if arglist
         (message "Arglist for %s: %s" tagname arglist)
-      (message "unknown function: %s" tagname))))
+        (message "Unknown function: %s" tagname))))
 
 ;; Define function documentation function
 (defun php-search-documentation ()
-  "Search PHP documentation for the word at the point."
+  "Search PHP documentation for the word at point."
   (interactive)
   (browse-url (concat php-search-url (current-word t))))
 
@@ -1067,14 +1068,14 @@ for \\[find-tag] (which see)."
     ;; Fontify variables and function calls
     '("\\$\\(this\\|that\\)\\W" (1 font-lock-constant-face nil nil))
     `(,(concat "\\$\\(" php-superglobals "\\)\\W")
-      (1 font-lock-constant-face nil nil)) ; $_GET & co
-    '("\\$\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face)) ; $variable
-    '("->\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face t t)) ; ->variable
-    '("->\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" . (1 php-default-face t t)) ; ->function_call
-    '("\\(\\(?:\\sw\\|\\s_\\)+\\)::\\(?:\\sw\\|\\s_\\)+\\s-*(?" . (1 font-lock-type-face)) ; class::member
-    '("::\\(\\(?:\\sw\\|\\s_\\)+\\>[^(]\\)" . (1 php-default-face)) ; class::constant
-    '("\\<\\(?:\\sw\\|\\s_\\)+\\s-*[[(]" . php-default-face)    ; word( or word[
-    '("\\<[0-9]+" . php-default-face)           ; number (also matches word)
+      (1 font-lock-constant-face nil nil)) ;; $_GET & co
+    '("\\$\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face)) ;; $variable
+    '("->\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face t t)) ;; ->variable
+    '("->\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" . (1 php-default-face t t)) ;; ->function_call
+    '("\\(\\(?:\\sw\\|\\s_\\)+\\)::\\(?:\\sw\\|\\s_\\)+\\s-*(?" . (1 font-lock-type-face)) ;; class::member
+    '("::\\(\\(?:\\sw\\|\\s_\\)+\\>[^(]\\)" . (1 php-default-face)) ;; class::constant
+    '("\\<\\(?:\\sw\\|\\s_\\)+\\s-*[[(]" . php-default-face) ;; word( or word[
+    '("\\<[0-9]+" . php-default-face) ;; number (also matches word)
 
     ;; Warn on any words not already fontified
     '("\\<\\(?:\\sw\\|\\s_\\)+\\>" . font-lock-warning-face)
