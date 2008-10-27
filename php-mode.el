@@ -124,24 +124,24 @@ Turning this on will open it whenever `php-mode' is loaded."
   :set (lambda (sym val)
          (set-default sym val)
          (when val
-             (speedbar 1)))
+           (speedbar 1)))
   :group 'php)
 
 (defvar php-imenu-generic-expression
- '(
-   ("Private Methods"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?private\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
-   ("Protected Methods"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?protected\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
-   ("Public Methods"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?public\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
-   ("Classes"
-    "^\\s-*class\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*" 1)
-   ("All Functions"
-    "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
-   )
- "Imenu generic expression for PHP Mode.  See `imenu-generic-expression'."
- )
+  '(
+    ("Private Methods"
+     "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?private\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
+    ("Protected Methods"
+     "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?protected\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
+    ("Public Methods"
+     "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?public\\s-+\\(?:static\\s-+\\)?function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
+    ("Classes"
+     "^\\s-*class\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*" 1)
+    ("All Functions"
+     "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" 1)
+    )
+  "Imenu generic expression for PHP Mode.  See `imenu-generic-expression'."
+  )
 
 (defcustom php-manual-url "http://www.php.net/manual/en/"
   "URL at which to find PHP manual.
@@ -311,7 +311,7 @@ See `php-beginning-of-defun'."
 
   ;; Specify that cc-mode recognize Javadoc comment style
   (set (make-local-variable 'c-doc-comment-style)
-    '((php-mode . javadoc)))
+       '((php-mode . javadoc)))
 
 ;;   (c-lang-defconst c-class-decl-kwds
 ;;     php php-class-decl-kwds)
@@ -410,23 +410,23 @@ for \\[find-tag] (which see)."
         completion
         (php-functions (php-completion-table)))
     (if (not pattern) (message "Nothing to complete")
-        (search-backward pattern)
-        (setq beg (point))
-        (forward-char (length pattern))
-        (setq completion (try-completion pattern php-functions nil))
-        (cond ((eq completion t))
-              ((null completion)
-               (message "Can't find completion for \"%s\"" pattern)
-               (ding))
-              ((not (string= pattern completion))
-               (delete-region beg (point))
-               (insert completion))
-              (t
-               (message "Making completion list...")
-               (with-output-to-temp-buffer "*Completions*"
-                 (display-completion-list
-                  (all-completions pattern php-functions)))
-               (message "Making completion list...%s" "done"))))))
+      (search-backward pattern)
+      (setq beg (point))
+      (forward-char (length pattern))
+      (setq completion (try-completion pattern php-functions nil))
+      (cond ((eq completion t))
+            ((null completion)
+             (message "Can't find completion for \"%s\"" pattern)
+             (ding))
+            ((not (string= pattern completion))
+             (delete-region beg (point))
+             (insert completion))
+            (t
+             (message "Making completion list...")
+             (with-output-to-temp-buffer "*Completions*"
+               (display-completion-list
+                (all-completions pattern php-functions)))
+             (message "Making completion list...%s" "done"))))))
 
 ;; Build php-completion-table on demand.  The table includes the
 ;; PHP functions and the tags from the current tags-file-name
@@ -522,7 +522,7 @@ for \\[find-tag] (which see)."
                        (match-beginning 1) (match-end 1)))))
     (if arglist
         (message "Arglist for %s: %s" tagname arglist)
-        (message "unknown function: %s" tagname))))
+      (message "unknown function: %s" tagname))))
 
 ;; Define function documentation function
 (defun php-search-documentation ()
