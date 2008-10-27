@@ -7,7 +7,7 @@
 ;; Author: Turadg Aleahmad, 1999-2004
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2008-10-23
+;; Modified: 2008-10-27
 ;; X-URL:   http://php-mode.sourceforge.net/
 
 (defconst php-mode-version-number "1.4.1-alpha"
@@ -58,7 +58,6 @@
 ;; handy IDE-type features such as documentation search and a source
 ;; and class browser.
 
-
 ;;; Contributors: (in chronological order)
 
 ;; Juanjo, Torsten Martinsen, Vinai Kopp, Sean Champ, Doug Marcey,
@@ -83,23 +82,7 @@
 ;;   Monnier to correct highlighting and indentation. (Lennart Borgman)
 ;;   Changed the highlighting of the HTML part. (Lennart Borgman)
 ;;
-;; 1.2
-;;   Implemented php-show-arglist, C-. (Engelke Eschner)
-;;   Implemented php-complete-function, M-tab (Engelke Eschner)
-;;   Re-enabled # comment detection in GNU Emacs (Urban Müller)
-;;   Fixed some keybindings and default settings (Engelke Eschner)
-;;
-;; 1.1
-;;   Added PHP5 support (Giacomo Tesio)
-;;     known problem: doesn't highlight after first 'implements'
-;;   Better XEmacs compatibility (imenu, regexp, and comments!) (Ville Skytta)
-;;   Improvement to php-conditional-key regexp (Eric Mc Sween)
-
-;; 1.05
-;;   Incorporated speedbar defs by Gerrit Riessen
-;;   Add "foreach" to conditional introducing keywords (Nils Rennebarth)
-;;   Cleared the Changelog
-;;   Moved contribution credits into comments above
+;; See the ChangeLog file included with the source package.
 
 
 ;;; Code:
@@ -210,7 +193,7 @@ Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
-(defconst php-mode-modified "2008-10-23"
+(defconst php-mode-modified "2008-10-27"
   "PHP Mode build date.")
 
 (defun php-mode-version ()
@@ -524,7 +507,6 @@ for \\[find-tag] (which see)."
                        (point))))
       nil)))
 
-
 (defun php-show-arglist ()
   (interactive)
   (let* ((tagname (php-get-pattern))
@@ -588,7 +570,6 @@ for \\[find-tag] (which see)."
        "PHP_BINDIR" "PHP_LIBDIR" "PHP_DATADIR" "PHP_SYSCONFDIR"
        "PHP_LOCALSTATEDIR" "PHP_CONFIG_FILE_PATH"
        "PHP_EOL"
-
 
        ;; date and time constants
        "DATE_ATOM" "DATE_COOKIE" "DATE_ISO8601"
@@ -1100,18 +1081,6 @@ for \\[find-tag] (which see)."
 
     ))
   "Gauchy level highlighting for PHP mode.")
-
-;; Create "php-default-face" symbol for GNU Emacs so that both XEmacs
-;; and GNU emacs can refer to the default face.
-(unless (boundp 'php-default-face)
-   (defvar php-default-face 'php-default-face))
-
-;; Create faces for XEmacs
-(when (featurep 'xemacs)
-  (unless (boundp 'font-lock-keyword-face)
-    (copy-face 'bold 'font-lock-keyword-face))
-  (unless (boundp 'font-lock-constant-face)
-    (copy-face 'font-lock-keyword-face 'font-lock-constant-face)))
 
 (provide 'php-mode)
 
