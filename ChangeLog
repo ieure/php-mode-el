@@ -1,3 +1,14 @@
+2008-11-03  Aaron S. Hawley  <ashawley-@-sourceforge.net>
+
+	* php-mode.el (php-class-key): Use c-lang-const to retrieve value
+	for c-symbol-key.
+	(php-mode): Add underscore (_) to syntax table for
+	font-lock-defaults.
+	(php-font-lock-keywords-1, php-font-lock-keywords-2)
+	(php-font-lock-keywords-3): Change references to \\s_ in regular
+	expressions to just using \\sw.  Remove usage of "[^_$]?" and
+	"[^_]?"  regular expression.
+
 2008-10-27  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* php-mode.el: Removed items in the ChangeLog section.  A

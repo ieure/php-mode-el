@@ -7,10 +7,10 @@
 ;; Author: Turadg Aleahmad, 1999-2004
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2008-10-27
+;; Modified: 2008-11-03
 ;; X-URL:   http://php-mode.sourceforge.net/
 
-(defconst php-mode-version-number "1.4.1-alpha"
+(defconst php-mode-version-number "1.5.0-alpha"
   "PHP Mode version number.")
 
 ;;; License
@@ -90,6 +90,7 @@
 (require 'speedbar)
 (require 'font-lock)
 (require 'cc-mode)
+(require 'cc-langs)
 (require 'custom)
 (require 'etags)
 (eval-when-compile
@@ -193,7 +194,7 @@ Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
-(defconst php-mode-modified "2008-10-27"
+(defconst php-mode-modified "2008-11-03"
   "PHP Mode build date.")
 
 (defun php-mode-version ()
@@ -281,9 +282,9 @@ See `php-beginning-of-defun'."
 (defconst php-class-key
   (concat
    "\\(" (regexp-opt php-class-decl-kwds) "\\)\\s-+"
-   c-symbol-key                                 ;; Class name.
-   "\\(\\s-*extends\\s-*" c-symbol-key "\\)?"   ;; Name of superclass.
-   "\\(\\s-*implements\\s-*[^{]+{\\)?")) ;; List of any adopted protocols.
+   (c-lang-const c-symbol-key c)                ;; Class name.
+   "\\(\\s-+extends\\s-+" (c-lang-const c-symbol-key c) "\\)?" ;; Name of superclass.
+   "\\(\\s-+implements\\s-+[^{]+{\\)?")) ;; List of any adopted protocols.
 
 ;;;###autoload
 (define-derived-mode php-mode c-mode "PHP"
@@ -326,7 +327,7 @@ See `php-beginning-of-defun'."
            php-font-lock-keywords-3)
           nil                               ; KEYWORDS-ONLY
           t                                 ; CASE-FOLD
-          nil                               ; SYNTAX-ALIST
+          (("_" . "w"))                    ; SYNTAX-ALIST
           nil))                             ; SYNTAX-BEGIN
 
   ;; Electric behaviour must be turned off, they do not work since
@@ -966,16 +967,16 @@ current `tags-file-name'."
     '(1 font-lock-keyword-face))
 
    ;; Fontify keywords and targets, and case default tags.
-   (list "[^_$]?\\<\\(break\\|case\\|continue\\)\\>\\s-*\\(-?\\(?:\\sw\\|\\s_\\)+\\)?"
+   (list "\\<\\(break\\|case\\|continue\\)\\>\\s-+\\(-?\\sw+\\)?"
          '(1 font-lock-keyword-face) '(2 font-lock-constant-face t t))
    ;; This must come after the one for keywords and targets.
-   '(":" ("^\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*:\\s-*$"
+   '(":" ("^\\s-+\\(\\sw+\\)\\s-+\\s-+$"
           (beginning-of-line) (end-of-line)
           (1 font-lock-constant-face)))
 
    ;; treat 'print' as keyword only when not used like a function name
    '("\\<print\\s-*(" . php-default-face)
-   '("[^_$]?\\<\\(print\\)\\>[^_]?" (1 font-lock-keyword-face))
+   '("\\<print\\>" . font-lock-keyword-face)
 
    ;; Fontify PHP tag
    (cons php-tags-key font-lock-preprocessor-face)
@@ -993,33 +994,33 @@ current `tags-file-name'."
    (list
 
     ;; class declaration
-    '("[^_]?\\<\\(class\\|interface\\)\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
+    '("\\<\\(class\\|interface\\)\\s-+\\(\\sw+\\)?"
       (1 font-lock-keyword-face) (2 font-lock-type-face nil t))
     ;; handle several words specially, to include following word,
     ;; thereby excluding it from unknown-symbol checks later
     ;; FIX to handle implementing multiple
     ;; currently breaks on "class Foo implements Bar, Baz"
-    '("\\<\\(new\\|extends\\|implements\\)\\s-+\\$?\\(\\(?:\\sw\\|\\s_\\)+\\)"
+    '("\\<\\(new\\|extends\\|implements\\)\\s-+\\$?\\(\\sw+\\)"
       (1 font-lock-keyword-face) (2 font-lock-type-face))
 
     ;; function declaration
-    '("\\<\\(function\\)\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
+    '("\\<\\(function\\)\\s-+&?\\(\\sw+\\)\\s-*("
       (1 font-lock-keyword-face)
       (2 font-lock-function-name-face nil t))
 
     ;; class hierarchy
-    '("[^_$]?\\<\\(self\\|parent\\)\\>[^_]?" (1 font-lock-constant-face nil nil))
+    '("\\<\\(self\\|parent\\)\\>" (1 font-lock-constant-face nil nil))
 
     ;; method and variable features
-    '("\\<\\(private\\|protected\\|public\\)\\s-+\\$?\\(?:\\sw\\|\\s_\\)+"
+    '("\\<\\(private\\|protected\\|public\\)\\s-+\\$?\\sw+"
       (1 font-lock-keyword-face))
 
     ;; method features
-    '("^\\s-*\\(abstract\\|static\\|final\\)\\s-+\\$?\\(?:\\sw\\|\\s_\\)+"
+    '("^\\s-*\\(abstract\\|static\\|final\\)\\s-+\\$?\\sw+"
       (1 font-lock-keyword-face))
 
     ;; variable features
-    '("^\\s-*\\(static\\|const\\)\\s-+\\$?\\(?:\\sw\\|\\s_\\)+"
+    '("^\\s-*\\(static\\|const\\)\\s-+\\$?\\sw+"
       (1 font-lock-keyword-face))
     ))
   "Medium level highlighting for PHP mode.")
@@ -1046,12 +1047,12 @@ current `tags-file-name'."
     ;;'("&\\w+;" . font-lock-variable-name-face)
 
     ;; warn about '$' immediately after ->
-    '("\\$\\(?:\\sw\\|\\s_\\)+->\\s-*\\(\\$\\)\\(\\(?:\\sw\\|\\s_\\)+\\)"
+    '("\\$\\sw+->\\s-*\\(\\$\\)\\(\\sw+\\)"
       (1 font-lock-warning-face) (2 php-default-face))
 
     ;; warn about $word.word -- it could be a valid concatenation,
     ;; but without any spaces we'll assume $word->word was meant.
-    '("\\$\\(?:\\sw\\|\\s_\\)+\\(\\.\\)\\sw"
+    '("\\$\\sw+\\(\\.\\)\\sw"
       1 font-lock-warning-face)
 
     ;; Warn about ==> instead of =>
@@ -1062,23 +1063,23 @@ current `tags-file-name'."
       1 font-lock-type-face)
 
     ;; PHP5: function declarations may contain classes as parameters type
-    `(,(concat "[(,]\\s-*\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-+&?\\$\\(?:\\sw\\|\\s_\\)+\\>")
+    `(,(concat "[(,]\\s-*\\(\\sw+\\)\\s-+&?\\$\\sw+\\>")
       1 font-lock-type-face)
 
     ;; Fontify variables and function calls
     '("\\$\\(this\\|that\\)\\W" (1 font-lock-constant-face nil nil))
     `(,(concat "\\$\\(" php-superglobals "\\)\\W")
       (1 font-lock-constant-face nil nil)) ;; $_GET & co
-    '("\\$\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face)) ;; $variable
-    '("->\\(\\(?:\\sw\\|\\s_\\)+\\)" (1 font-lock-variable-name-face t t)) ;; ->variable
-    '("->\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*(" . (1 php-default-face t t)) ;; ->function_call
-    '("\\(\\(?:\\sw\\|\\s_\\)+\\)::\\(?:\\sw\\|\\s_\\)+\\s-*(?" . (1 font-lock-type-face)) ;; class::member
-    '("::\\(\\(?:\\sw\\|\\s_\\)+\\>[^(]\\)" . (1 php-default-face)) ;; class::constant
-    '("\\<\\(?:\\sw\\|\\s_\\)+\\s-*[[(]" . php-default-face) ;; word( or word[
+    '("\\$\\(\\sw+\\)" (1 font-lock-variable-name-face)) ;; $variable
+    '("->\\(\\sw+\\)" (1 font-lock-variable-name-face t t)) ;; ->variable
+    '("->\\(\\sw+\\)\\s-*(" . (1 php-default-face t t)) ;; ->function_call
+    '("\\(\\sw+\\)::\\sw+\\s-*(?" . (1 font-lock-type-face)) ;; class::member
+    '("::\\(\\sw+\\>[^(]\\)" . (1 php-default-face)) ;; class::constant
+    '("\\<\\sw+\\s-*[[(]" . php-default-face) ;; word( or word[
     '("\\<[0-9]+" . php-default-face) ;; number (also matches word)
 
     ;; Warn on any words not already fontified
-    '("\\<\\(?:\\sw\\|\\s_\\)+\\>" . font-lock-warning-face)
+    '("\\<\\sw+\\>" . font-lock-warning-face)
 
     ))
   "Gauchy level highlighting for PHP mode.")
