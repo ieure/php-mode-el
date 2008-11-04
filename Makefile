@@ -69,7 +69,7 @@
 ### Code:
 
 package = php-mode
-version = 1.4.0
+version = 1.5.0
 release = $(package)-$(version)
 
 lisp_files = *.el

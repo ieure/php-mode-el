@@ -1,3 +1,14 @@
+2008-11-04  Aaron S. Hawley  <ashawley-@-sourceforge.net>
+
+	* Makefile (version): Change to 1.5.0 for release.
+
+	* php-mode.el: Update modification date in the header and add
+	ChangeLog entry for new version.
+	(php-mode-version-number, php-mode-modified): Mark as 1.5.0
+	release with today's date.
+
+	* php-mode.texi (version): Change to 1.5.0 for release.
+
 2008-11-03  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* php-mode.el (php-class-key): Use c-lang-const to retrieve value

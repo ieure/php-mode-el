@@ -7,10 +7,10 @@
 ;; Author: Turadg Aleahmad, 1999-2004
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2008-11-03
+;; Modified: 2008-11-04
 ;; X-URL:   http://php-mode.sourceforge.net/
 
-(defconst php-mode-version-number "1.5.0-alpha"
+(defconst php-mode-version-number "1.5.0"
   "PHP Mode version number.")
 
 ;;; License
@@ -70,6 +70,20 @@
 
 ;;; Changelog:
 
+;; 1.5
+;;   Support function keywords like public, private and the ampersand
+;;   character for function-based commands.  Support abstract, final,
+;;   static, public, private and protected keywords in Imenu.  Fix
+;;   reversed order of Imenu entries.  Use font-lock-preprocessor-face
+;;   for PHP and ASP tags.  Make php-mode-modified a literal value
+;;   rather than a computed string.  Add date and time constants of
+;;   PHP. (Dias Badekas) Fix false syntax highlighting of keywords
+;;   because of underscore character.  Change HTML indentation warning
+;;   to match only HTML at the beginning of the line.  Fix
+;;   byte-compiler warnings.  Clean-up whitespace and audited style
+;;   consistency of code.  Remove conditional bindings and XEmacs code
+;;   that likely does nothing.
+;;
 ;; 1.4
 ;;   Updated GNU GPL to version 3.  Ported to Emacs 22 (CC mode
 ;;   5.31). M-x php-mode-version shows version.  Provide end-of-defun
@@ -194,7 +208,7 @@ Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
-(defconst php-mode-modified "2008-11-03"
+(defconst php-mode-modified "2008-11-04"
   "PHP Mode build date.")
 
 (defun php-mode-version ()

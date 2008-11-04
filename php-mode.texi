@@ -2,7 +2,7 @@
 @c %**start of header
 @setfilename php-mode.info
 @settitle PHP Mode Manual
-@set version 1.4.0
+@set version 1.5.0
 @c %**end of header
 @copying
 This manual documents PHP mode version @value{version} for
