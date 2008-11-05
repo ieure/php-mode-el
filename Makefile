@@ -69,7 +69,7 @@
 ### Code:
 
 package = php-mode
-version = 1.5.0
+version = 1.6.0-alpha
 release = $(package)-$(version)
 
 lisp_files = *.el
@@ -85,10 +85,10 @@ GZIP ?= gzip -f
 TAR ?= tar
 ZIP ?= zip
 
+manuals: php-mode.info.gz php-mode.pdf php-mode.ps.gz php-mode.html
+
 dist: $(release).tar.gz $(release).zip
 	$(RM) -r $(release)
-
-manuals: php-mode.info.gz php-mode.pdf php-mode.ps.gz php-mode.html
 
 $(release): $(lisp_files) $(texi_files) Makefile ChangeLog 
 	mkdir $@ \

@@ -7,10 +7,10 @@
 ;; Author: Turadg Aleahmad, 1999-2004
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2008-11-04
+;; Modified: 2008-11-05
 ;; X-URL:   http://php-mode.sourceforge.net/
 
-(defconst php-mode-version-number "1.5.0"
+(defconst php-mode-version-number "1.6.0-alpha"
   "PHP Mode version number.")
 
 ;;; License
@@ -208,7 +208,7 @@ Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
-(defconst php-mode-modified "2008-11-04"
+(defconst php-mode-modified "2008-11-05"
   "PHP Mode build date.")
 
 (defun php-mode-version ()
@@ -315,7 +315,7 @@ See `php-beginning-of-defun'."
   (set (make-local-variable 'c-opt-cpp-prefix) php-tags-key)
 
   (c-set-offset 'cpp-macro 0)
-  
+
 ;;   (c-lang-defconst c-block-stmt-1-kwds php php-block-stmt-1-kwds)
 ;;   (c-lang-defvar c-block-stmt-1-kwds (c-lang-const c-block-stmt-1-kwds))
   (set (make-local-variable 'c-block-stmt-1-key) php-block-stmt-1-key)
@@ -343,6 +343,7 @@ See `php-beginning-of-defun'."
           t                                 ; CASE-FOLD
           (("_" . "w"))                    ; SYNTAX-ALIST
           nil))                             ; SYNTAX-BEGIN
+  (modify-syntax-entry ?# "< b")
 
   ;; Electric behaviour must be turned off, they do not work since
   ;; they can not find the correct syntax in embedded PHP.

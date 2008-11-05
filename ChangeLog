@@ -1,3 +1,40 @@
+2008-11-05  Aaron S. Hawley  <ashawley-@-sourceforge.net>
+
+	* Makefile (version): Update to 1.6.0-alpha.
+	(dist): This shouldn't be the default.  Move this below the
+	"manuals" target,
+
+	* php-mode.el (php-mode-version-number): Mark as "alpha" release
+	for next version.
+	(php-mode): Put back modify-syntax-entry for # 
+
+	* php-mode.texi: Typos and grammatical fixes.  Suggest section on
+	tag searching features of Emacs supported by PHP mode.  Propose a
+	"how to contribute" section.  Suggest cross-referencing the
+	"Customization" chapter.
+	(Introduction): Markup "PEAR" as @dfn.  Change "for developing in"
+	to "development".
+	(Installation): Rephrase a sentences.  Cite Sacha Chua's tutorial
+	and the EmacsWiki.  Add note about maintainer key trust.
+	(Electricity): Markup "indentation" as a @dfn.  Better explain
+	indentation commands in Emacs.
+	(Motion): Make a sentence duplicated in the manual consistent.
+	(Indentation): Indentation rules for c-mode can also be set by the
+	local machine or the user.  Suggest documenting C-c C-o.
+	(Editing): Markup Docblock as @dfn.  Make a sentence duplicated in
+	the manual consistent.  Change "identified to" to "identified as".
+	Change "object" to "object definition".
+	(Completion): Change "it is possible" to "can".  Change "defined
+	by" to "native to".  Better explain functions "defined by you".
+	(Creating Tags Tables, Completion commands): New sections based on
+	"Completion" chapter.
+	(PHP Comments): Make a sentence duplicated in the manual
+	consistent.  Remove "with the".
+	(Index Menu): Change "provides" to "can provide".  Suggest having
+	example .emacs bits for Imenu support.
+	(Change Logs): Markup "Diff mode" in a @dfn.  Try better
+	documenting C-x 4 a.
+	
 2008-11-04  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* Makefile (version): Change to 1.5.0 for release.
