@@ -7,7 +7,7 @@
 ;; Author: Turadg Aleahmad, 1999-2004
 ;; Keywords: php languages oop
 ;; Created: 1999-05-17
-;; Modified: 2008-11-05
+;; Modified: 2008-12-12
 ;; X-URL:   http://php-mode.sourceforge.net/
 
 (defconst php-mode-version-number "1.6.0-alpha"
@@ -109,6 +109,7 @@
 (require 'etags)
 (eval-when-compile
   (require 'regexp-opt))
+(require 'add-log)
 
 ;; Local variables
 (defgroup php nil

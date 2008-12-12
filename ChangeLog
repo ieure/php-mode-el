@@ -1,12 +1,17 @@
+2008-12-12  Aaron Hawley  <aaronh@localhost.localdomain>
+
+	* php-mode.el: Require add-log to avoid byte compilation warning
+	for add-log-current-defun-header-regexp.
+
 2008-11-05  Aaron S. Hawley  <ashawley-@-sourceforge.net>
 
 	* Makefile (version): Update to 1.6.0-alpha.
-	(dist): This shouldn't be the default.  Move this below the
-	"manuals" target,
+	(dist): This shouldn't be the default build rule for the Makefile.
+	Move this below the "manuals" target, which should be the default.
 
 	* php-mode.el (php-mode-version-number): Mark as "alpha" release
 	for next version.
-	(php-mode): Put back modify-syntax-entry for # 
+	(php-mode): Put back modify-syntax-entry for # comments.
 
 	* php-mode.texi: Typos and grammatical fixes.  Suggest section on
 	tag searching features of Emacs supported by PHP mode.  Propose a
