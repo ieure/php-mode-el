@@ -1,3 +1,8 @@
+2009-06-07  Ian Eure  <ian.eure@gmail.com>
+
+	* php-mode.el: Don't use (make-local-variable) for variables that
+	are already declared buffer-local. Fixes docblock fontification.
+
 2008-12-12  Aaron Hawley  <aaronh@localhost.localdomain>
 
 	* php-mode.el: Require add-log to avoid byte compilation warning

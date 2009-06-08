@@ -319,21 +319,19 @@ See `php-beginning-of-defun'."
 
 ;;   (c-lang-defconst c-block-stmt-1-kwds php php-block-stmt-1-kwds)
 ;;   (c-lang-defvar c-block-stmt-1-kwds (c-lang-const c-block-stmt-1-kwds))
-  (set (make-local-variable 'c-block-stmt-1-key) php-block-stmt-1-key)
+  (set 'c-block-stmt-1-key php-block-stmt-1-key)
 
 ;;   (c-lang-defconst c-block-stmt-2-kwds php php-block-stmt-2-kwds)
 ;;   (c-lang-defvar c-block-stmt-2-kwds (c-lang-const c-block-stmt-2-kwds))
-  (set (make-local-variable 'c-block-stmt-2-key) php-block-stmt-2-key)
+  (set 'c-block-stmt-2-key php-block-stmt-2-key)
 
   ;; Specify that cc-mode recognize Javadoc comment style
-  (set (make-local-variable 'c-doc-comment-style)
-       '((php-mode . javadoc)))
+  (add-to-list 'c-doc-comment-style '(php-mode . javadoc))
 
 ;;   (c-lang-defconst c-class-decl-kwds
 ;;     php php-class-decl-kwds)
-  (set (make-local-variable 'c-class-key) php-class-key)
+  (setq 'c-class-key php-class-key)
 
-  (make-local-variable 'font-lock-defaults)
   (setq font-lock-defaults
         '((php-font-lock-keywords-1
            php-font-lock-keywords-2
