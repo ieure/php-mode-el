@@ -308,29 +308,19 @@ See `php-beginning-of-defun'."
 
 ;; PHP doesn't have C-style macros.
 ;; HACK: Overwrite this syntax with rules to match <?php and others.
-;;   (c-lang-defconst c-opt-cpp-start php php-tags-key)
-;;   (c-lang-defvar c-opt-cpp-start (c-lang-const c-opt-cpp-start))
   (set (make-local-variable 'c-opt-cpp-start) php-tags-key)
-;;   (c-lang-defconst c-opt-cpp-start php php-tags-key)
-;;   (c-lang-defvar c-opt-cpp-start (c-lang-const c-opt-cpp-start))
   (set (make-local-variable 'c-opt-cpp-prefix) php-tags-key)
 
   (c-set-offset 'cpp-macro 0)
 
-;;   (c-lang-defconst c-block-stmt-1-kwds php php-block-stmt-1-kwds)
-;;   (c-lang-defvar c-block-stmt-1-kwds (c-lang-const c-block-stmt-1-kwds))
-  (set 'c-block-stmt-1-key php-block-stmt-1-key)
+  (setq c-block-stmt-1-key php-block-stmt-1-key)
 
-;;   (c-lang-defconst c-block-stmt-2-kwds php php-block-stmt-2-kwds)
-;;   (c-lang-defvar c-block-stmt-2-kwds (c-lang-const c-block-stmt-2-kwds))
-  (set 'c-block-stmt-2-key php-block-stmt-2-key)
+  (setq c-block-stmt-2-key php-block-stmt-2-key)
 
   ;; Specify that cc-mode recognize Javadoc comment style
   (add-to-list 'c-doc-comment-style '(php-mode . javadoc))
 
-;;   (c-lang-defconst c-class-decl-kwds
-;;     php php-class-decl-kwds)
-  (setq 'c-class-key php-class-key)
+  (setq c-class-key php-class-key)
 
   (setq font-lock-defaults
         '((php-font-lock-keywords-1
